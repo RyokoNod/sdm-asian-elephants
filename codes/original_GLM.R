@@ -1,3 +1,5 @@
+library(caret)
+library(MLmetrics)
 source("utils.R")
 datafolder <- '../data/Modeling_Data/'
 datafile <- 'traindata_GLM.csv'
@@ -17,9 +19,29 @@ logreg <- glm(formula=regformula,
               data=traindata[ , !(colnames(traindata) %in% c("HID"))],
               family=binomial)
 
+summary(logreg) # view summary of fit
 
-summary(logreg)
+# the raw outputs (probabilities) of logistic regression model
 trainpred_probs <-predict(logreg,type="response")
-trainpred <- ifelse(trainpred_probs > 0.5, 1, 0)
 valpred_probs <- predict(logreg,newdata=validdata, type="response")
-valpred <- ifelse(valpred_probs > 0.5, 1, 0)
+
+# get the ideal threshold value for elephant presence
+# by maximizing the validation data's F1 score
+thres_candidates <- seq(0.01, 0.99, .01)
+f1_scores <- sapply(thres_candidates, 
+                    function(thres) F1_Score(validdata$PA, 
+                                             ifelse(valpred_probs >= thres, 1, 0), 
+                                             positive = 1))
+thres <- thres_candidates[which.max(f1_scores)] # threshold that maximizes F1 score
+
+
+trainpred <- ifelse(trainpred_probs > thres, 1, 0)
+AUC(trainpred, traindata$PA)
+
+
+valpred <- ifelse(valpred_probs > thres, 1, 0)
+AUC(valpred, validdata$PA)
+
+# https://www.r-bloggers.com/2020/01/evaluate-your-r-model-with-mlmetrics/
+
+          
