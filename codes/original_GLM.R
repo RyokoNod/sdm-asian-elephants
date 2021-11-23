@@ -2,9 +2,14 @@ library(caret)
 library(MLmetrics)
 library(formattable)
 source("utils.R")
-datafolder <- '../data/Modeling_Data/'
-datafile <- 'traindata_GLM.csv'
 random_seed = 19924 # set random seed
+datafolder <- '../data/Modeling_Data/'
+
+# comment or uncomment these 2 lines to switch feature sets
+#datafile <- 'traindata_GLM.csv' 
+datafile <- 'traindata_SGLM.csv'
+
+##### Preparing the training and validation data #####
 
 # import the present-day climate variables with Asian elephant presence
 traindata_master <- read.csv(paste(datafolder,datafile,sep=''),header=TRUE)
@@ -14,6 +19,7 @@ trainval <- trainvalsplit(traindata_master, 0.8, random_seed=random_seed)
 traindata <- trainval$traindata
 validdata <- trainval$validdata
 
+##### Fitting the model #####
 
 regformula <- PA ~. # Elephant presence is determined by a weighted sum of all features
 logreg <- glm(formula=regformula,
@@ -21,6 +27,8 @@ logreg <- glm(formula=regformula,
               family=binomial)
 
 summary(logreg) # view summary of fit
+
+##### Evaluating the model #####
 
 # the raw outputs (probabilities) of logistic regression model
 trainpred_probs <-predict(logreg,type="response")
