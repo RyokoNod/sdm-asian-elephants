@@ -1,5 +1,6 @@
 library(caret)
 library(MLmetrics)
+library(formattable)
 source("utils.R")
 datafolder <- '../data/Modeling_Data/'
 datafile <- 'traindata_GLM.csv'
@@ -34,14 +35,25 @@ f1_scores <- sapply(thres_candidates,
                                              positive = 1))
 thres <- thres_candidates[which.max(f1_scores)] # threshold that maximizes F1 score
 
-
+# get the precision, recall, accuracy, and AUC scores
 trainpred <- ifelse(trainpred_probs > thres, 1, 0)
-AUC(trainpred, traindata$PA)
-
+trainprec <- round(Precision(traindata$PA, trainpred, positive = 1), 3)
+trainrec <- round(Recall(traindata$PA, trainpred, positive = 1), 3)
+trainacc <- round(Accuracy(trainpred, traindata$PA), 3)
+trainauc <- round(AUC(trainpred, traindata$PA), 3)
 
 valpred <- ifelse(valpred_probs > thres, 1, 0)
-AUC(valpred, validdata$PA)
+valprec <- round(Precision(validdata$PA, valpred, positive = 1), 3)
+valrec <- round(Recall(validdata$PA, valpred, positive = 1), 3)
+valacc <- round(Accuracy(valpred, validdata$PA), 3)
+valauc <- round(AUC(valpred, validdata$PA), 3)
 
-# https://www.r-bloggers.com/2020/01/evaluate-your-r-model-with-mlmetrics/
+# display the evaluation metrics as tables
+evals <- data.frame(Dataset = c("Training", "Validation"),
+                    Precision = c(trainprec, valprec),
+                    Recall = c(trainrec,  valrec),
+                    Accuracy = c(trainacc, valacc),
+                    AUC = c(trainauc, valauc)
+                    )
+formattable(evals)
 
-          
