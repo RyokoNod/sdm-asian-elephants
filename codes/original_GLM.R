@@ -4,15 +4,19 @@ library(formattable)
 source("utils.R")
 random_seed = 19924 # set random seed
 datafolder <- '../data/Modeling_Data/'
+resultfolder <- '../data/Results/Original_GLM/'
+mode <- 'GLM' # set 'GLM' or 'SGLM' to switch feature sets
 
-# comment or uncomment these 2 lines to switch feature sets
-#datafile <- 'traindata_GLM.csv' 
-datafile <- 'traindata_SGLM.csv'
+trainfile <- paste(datafolder,'traindata_',mode,'.csv',sep='')
+testfile <- paste(datafolder,'testdata_',mode,'.csv',sep='')
 
-##### Preparing the training and validation data #####
+##### Preparing the training, validation, and test data #####
 
 # import the present-day climate variables with Asian elephant presence
-traindata_master <- read.csv(paste(datafolder,datafile,sep=''),header=TRUE)
+traindata_master <- read.csv(trainfile, header=TRUE)
+
+# import the future climate variables
+testdata <- read.csv(testfile, header=TRUE)
 
 # do the training and validation split (validation data != test data) 
 trainval <- trainvalsplit(traindata_master, 0.8, random_seed=random_seed)
@@ -65,3 +69,15 @@ evals <- data.frame(Dataset = c("Training", "Validation"),
                     )
 formattable(evals)
 
+##### Test data results ######
+
+# the outputs (probabilities) of logistic regression model
+testpred_probs <-predict(logreg,newdata=testdata,type="response")
+testpred <- ifelse(testpred_probs > thres, 1, 0)
+testpred <- cbind(testdata['HID'], testpred_probs, testpred)
+names(testpred) <- c('HID', 'probs', 'pred_labels')
+
+
+# write to file for QGIS visualization
+resultfile <- paste(resultfolder,'results_',mode,'_thres', thres*100,'.csv',sep='')
+write.csv(testpred, resultfile, row.names=FALSE)
