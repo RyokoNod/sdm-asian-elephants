@@ -2,7 +2,7 @@ library(caret)
 library(MLmetrics)
 library(formattable)
 source("utils.R")
-random_seed = 36941 # set random seed
+random_seed = 46952 # set random seed
 datafolder <- '../data/Modeling_Data/'
 resultfolder <- '../data/Results/Original_GLM/'
 mode <- 'GLM' # set 'GLM' or 'SGLM' to switch feature sets
