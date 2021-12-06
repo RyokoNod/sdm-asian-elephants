@@ -2,7 +2,7 @@ library(caret)
 library(MLmetrics)
 library(formattable)
 source("utils.R")
-random_seed = 19924 # set random seed
+random_seed = 36941 # set random seed
 datafolder <- '../data/Modeling_Data/'
 resultfolder <- '../data/Results/Original_GLM/'
 mode <- 'GLM' # set 'GLM' or 'SGLM' to switch feature sets
@@ -79,5 +79,6 @@ names(testpred) <- c('HID', 'probs', 'pred_labels')
 
 
 # write to file for QGIS visualization
-resultfile <- paste(resultfolder,'results_',mode,'_thres', thres*100,'.csv',sep='')
+resultfile <- paste(resultfolder,'results_',mode,'_seed', random_seed, 
+                    '_thres', thres*100,'.csv',sep='')
 write.csv(testpred, resultfile, row.names=FALSE)
