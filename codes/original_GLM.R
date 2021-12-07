@@ -2,13 +2,16 @@ library(caret)
 library(MLmetrics)
 library(formattable)
 source("utils.R")
-random_seed = 46952 # set random seed
+random_seed = 19924 # set random seed
 datafolder <- '../data/Modeling_Data/'
 resultfolder <- '../data/Results/Original_GLM/'
 mode <- 'GLM' # set 'GLM' or 'SGLM' to switch feature sets
 
 trainfile <- paste(datafolder,'traindata_',mode,'.csv',sep='')
 testfile <- paste(datafolder,'testdata_',mode,'.csv',sep='')
+
+# present day data on land. Overlaps with training and validation data
+pres_testfile <- paste(datafolder,'testdata_pres_',mode,'.csv',sep='')
 
 ##### Preparing the training, validation, and test data #####
 
@@ -82,3 +85,18 @@ names(testpred) <- c('HID', 'probs', 'pred_labels')
 resultfile <- paste(resultfolder,'results_',mode,'_seed', random_seed, 
                     '_thres', thres*100,'.csv',sep='')
 write.csv(testpred, resultfile, row.names=FALSE)
+
+##### Additional validation: outputs for present-day landmass #####
+
+pres_testdata <- read.csv(pres_testfile, header=TRUE)
+
+# make the prediction
+pres_testpred_probs <-predict(logreg,newdata=pres_testdata,type="response")
+pres_testpred <- ifelse(pres_testpred_probs > thres, 1, 0)
+pres_testpred <- cbind(pres_testdata['HID'], pres_testpred_probs, pres_testpred)
+names(pres_testpred) <- c('HID', 'probs', 'pred_labels')
+
+# write to file
+pres_resultfile <- paste(resultfolder,'results_present_',mode,'_seed', random_seed, 
+                    '_thres', thres*100,'.csv',sep='')
+write.csv(pres_testpred, pres_resultfile, row.names=FALSE)
