@@ -6,7 +6,7 @@ options(mc.cores=parallel::detectCores())  # use all available cores
 
 random_seed = 12244 # set random seed
 datafolder <- '../data/Modeling_Data/'
-resultfolder <- '../data/Results/'
+resultfolder <- '../data/Results/Bayesian_GLM/'
 
 # GLM for random CV feature set, SGLM for spatial CV feature set
 feature_type <- 'GLM'
@@ -54,9 +54,63 @@ saveRDS(model, "bayesGLM_model.rds") # save model so I can recover if R crashes
 # load if R crashes
 model <- readRDS("bayesGLM_model.rds") 
 
+##### Predictions with test data (future) #####
+draws <- extract(model) # get the sample draws from model
+intercept_post <- draws$intercept
+coeffs_post <- draws$coeffs
+
+
+test_features <- subset(testdata, select=-c(HID)) 
+
+set.seed(random_seed)
+N <- 100
+nhex <- dim(test_features)[1]
+nfeatures <-dim(test_features)[2]
+intercept_samples <- sample(intercept_post, size = N)
+
+coeff_samples <- matrix(0, N, nfeatures)
+for (i in seq(1:nfeatures)){
+  coeff_samples[,i] <- sample(coeffs_post[,i], size = N)
+}
+
+probs_matrix <- matrix(0, N, nhex)
+for (i in seq(1:N)){
+  logreg_line <- rowSums(matrix(rep(coeff_samples[i,],each=nhex),nrow=nhex) * test_features) + intercept_samples[i]
+  probs_matrix[i,] <- 1/(1 + exp(-logreg_line))
+}
+
+saveRDS(probs_matrix, paste(resultfolder,'bayesGLM_pred_',feature_type,'_',random_seed,'.rds',sep=''))
+median_probs <- as.data.frame(apply(probs_matrix, 2, median))
+mean_probs <- as.data.frame(apply(probs_matrix, 2, mean))
+cilow_probs <- as.data.frame(apply(probs_matrix, 2, quantile, probs=c(0.025)))
+cihigh_probs <- as.data.frame(apply(probs_matrix, 2, quantile, probs=c(0.975)))
+ci_size <-cihigh_probs - cilow_probs
+sd_probs <- as.data.frame(apply(probs_matrix, 2, sd))
+output_probs <- cbind(subset(testdata,select=HID), median_probs, mean_probs, 
+                      cilow_probs, cihigh_probs, ci_size, sd_probs)
+colnames(output_probs) <- c("HID", "median_probs","mean_probs", "cilow", 
+                            "cihigh", "cisize", "standarddev")
+
+result_file <- paste(resultfolder,'results_',feature_type,'_', random_seed, 
+                    '.csv',sep='')
+write.csv(output_probs, result_file, row.names=FALSE)
+
+preddata <- list(
+  K = dim(test_features)[2], # number of features
+  N_samples = dim(draws$intercept)[1], # number of draws in fitted Stan model
+  N_test = dim(test_features)[1], # number of hexagons in test data
+  intercept = draws$intercept, # intercept draws from fitted Stan model
+  coeffs = draws$coeffs, # coefficient draws from fitted Stan model
+  x_test = test_features # validation features
+)
+
+future_pred <- stan(file = "bayesian_GLM_pred.stan",
+                    data = preddata, seed = random_seed,
+                    chains = 1, iter = 100,
+                    algorithm = "Fixed_param")
+
 ##### Training and Validation performance #####
-library(MLmetrics) # putting this here because my University computer refuses to install this package
-draws <- extract(model)
+library(MLmetrics) 
 tr_probs <- draws$tr_probs
 val_probs <- draws$val_probs
 colnames(tr_probs) <- train_HID[["HID"]]
@@ -71,6 +125,9 @@ f1_scores <- sapply(thres_candidates,
                                              ifelse(val_probs_med >= thres, 1, 0), 
                                              positive = 1))
 thres <- thres_candidates[which.max(f1_scores)]
+
+
+
 
 ##### Troubleshooting and Tuning #####
 
