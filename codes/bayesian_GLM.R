@@ -9,7 +9,7 @@ datafolder <- '../data/Modeling_Data/'
 resultfolder <- '../data/Results/Bayesian_GLM/'
 
 # GLM for random CV feature set, SGLM for spatial CV feature set
-feature_type <- 'GLM'
+feature_type <- 'SGLM'
 
 trainfile <- paste(datafolder,'traindata_',feature_type,'.csv',sep='')
 testfile <- paste(datafolder,'testdata_',feature_type,'.csv',sep='')
@@ -49,10 +49,10 @@ data <- list(
 sm <- rstan::stan_model(file = "./bayesian_GLM.stan") # specifying where the Stan model is
 model <- rstan::sampling(sm, data=data, seed = random_seed,
                          control = list(adapt_delta = 0.99, max_treedepth = 10)) # run MCMC
-saveRDS(model, "bayesGLM_model.rds") # save model so I can recover if R crashes
+saveRDS(model, "bayesGLM_spatialCVfeat_model.rds") # save model so I can recover if R crashes
 
 # load if R crashes
-model <- readRDS("bayesGLM_model.rds") 
+model <- readRDS("bayesGLM_spatialCVfeat_model.rds") 
 
 ##### Predictions with test data (future) #####
 draws <- extract(model) # get the sample draws from model
