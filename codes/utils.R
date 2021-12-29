@@ -43,3 +43,7 @@ trainvalsplit <- function(master_data, train_prop, random_seed){
   trainval <- list("traindata"=traindata, "validdata"=validdata)
   return(trainval)
 }
+
+bayesGLM_testpred <- function(model, testdata, N, matrixpath, csvpath, seed){
+  
+}
