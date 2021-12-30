@@ -1,4 +1,4 @@
-trainvalsplit <- function(master_data, train_prop, random_seed){
+trainvalsplit <- function(master_data, train_prop, random_seed=123456){
   # <Overview>
   # Given a dataset, this function separates the data into training
   # and validation set. (validation set != test set)
@@ -44,6 +44,55 @@ trainvalsplit <- function(master_data, train_prop, random_seed){
   return(trainval)
 }
 
-bayesGLM_testpred <- function(model, testdata, N, matrixpath, csvpath, seed){
+bayesGLM_testpred <- function(model, testdata, N, matrixpath, csvpath, seed=123456){
+  set.seed(seed)
+  draws <- extract(model) # get the sample draws from model
+  test_features <- subset(testdata, select=-c(HID)) # get the features from the model
   
+  # get the posterior distributions from the fitted model
+  intercept_post <- draws$intercept
+  coeffs_post <- draws$coeffs
+  
+  nhex <- dim(test_features)[1] # number of hexagons in test data
+  nfeatures <-dim(test_features)[2] # number of features in test data
+  
+  intercept_samples <- sample(intercept_post, size = N) # get samples for intercept
+  
+  # get samples for coefficients
+  coeff_samples <- matrix(0, N, nfeatures)
+  for (i in seq(1:nfeatures)){
+    coeff_samples[,i] <- sample(coeffs_post[,i], size = N)
+  }
+  
+  # get the prediction draws
+  probs_matrix <- matrix(0, N, nhex)
+  for (i in seq(1:N)){
+    logreg_line <- rowSums(matrix(rep(coeff_samples[i,],each=nhex),nrow=nhex) * test_features) + intercept_samples[i]
+    probs_matrix[i,] <- 1/(1 + exp(-logreg_line))
+  }
+  saveRDS(probs_matrix, matrixpath) #save the prediction draws
+  
+  # prepare the output data: median, mean, CI (95%), CI width, standard deviation
+  median_probs <- as.data.frame(apply(probs_matrix, 2, median))
+  mean_probs <- as.data.frame(apply(probs_matrix, 2, mean))
+  cilow_probs <- as.data.frame(apply(probs_matrix, 2, quantile, probs=c(0.025)))
+  cihigh_probs <- as.data.frame(apply(probs_matrix, 2, quantile, probs=c(0.975)))
+  ci_size <-cihigh_probs - cilow_probs
+  sd_probs <- as.data.frame(apply(probs_matrix, 2, sd))
+  output_probs <- cbind(subset(testdata,select=HID), median_probs, mean_probs, 
+                        cilow_probs, cihigh_probs, ci_size, sd_probs)
+  colnames(output_probs) <- c("HID", "median_probs","mean_probs", "cilow", 
+                              "cihigh", "cisize", "standarddev")
+  write.csv(output_probs, csvpath, row.names=FALSE) # write outputs to CSV
 }
+
+
+
+
+
+
+
+
+
+
+
