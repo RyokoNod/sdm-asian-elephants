@@ -9,7 +9,7 @@ datafolder <- '../data/Modeling_Data/'
 resultfolder <- '../data/Results/Bayesian_GLM/'
 
 # GLM for random CV feature set, SGLM for spatial CV feature set
-feature_type <- 'SGLM'
+feature_type <- 'GLM'
 
 trainfile <- paste(datafolder,'traindata_',feature_type,'.csv',sep='')
 testfile <- paste(datafolder,'testdata_',feature_type,'.csv',sep='')
