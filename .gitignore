@@ -10,3 +10,5 @@ data/~$about_data_points.xlsx
 data_exploration/.ipynb_checkpoints/
 
 codes/.Rhistory
+
+*.rds
