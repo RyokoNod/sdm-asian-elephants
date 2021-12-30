@@ -9,7 +9,7 @@ datafolder <- '../data/Modeling_Data/'
 resultfolder <- '../data/Results/Bayesian_GLM/'
 
 # GLM for random CV feature set, SGLM for spatial CV feature set
-feature_type <- 'GLM'
+feature_type <- 'SGLM'
 
 trainfile <- paste(datafolder,'traindata_',feature_type,'.csv',sep='')
 testfile <- paste(datafolder,'testdata_',feature_type,'.csv',sep='')
@@ -58,7 +58,7 @@ model <- readRDS("bayesGLM_spatialCVfeat_model.rds")
 draws <- extract(model) # get the sample draws from model
 intercept_post <- draws$intercept
 coeffs_post <- draws$coeffs
-
+testdata <- read.csv(pres_testfile, header=TRUE)
 
 test_features <- subset(testdata, select=-c(HID)) 
 
@@ -79,7 +79,7 @@ for (i in seq(1:N)){
   probs_matrix[i,] <- 1/(1 + exp(-logreg_line))
 }
 
-saveRDS(probs_matrix, paste(resultfolder,'bayesGLM_pred_',feature_type,'_',random_seed,'.rds',sep=''))
+saveRDS(probs_matrix, paste(resultfolder,'presbayesGLM_pred_',feature_type,'_',random_seed,'.rds',sep=''))
 median_probs <- as.data.frame(apply(probs_matrix, 2, median))
 mean_probs <- as.data.frame(apply(probs_matrix, 2, mean))
 cilow_probs <- as.data.frame(apply(probs_matrix, 2, quantile, probs=c(0.025)))
