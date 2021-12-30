@@ -50,7 +50,7 @@ model <- rstan::sampling(sm, data=data, seed = random_seed,
 saveRDS(model, "bayesGLM_spatialCVfeat_model.rds") # save model so I can recover if R crashes
 
 # load if R crashes
-model <- readRDS("bayesGLM_spatialCVfeat_model.rds") 
+model <- readRDS("bayesGLM_randCVfeat_model.rds") 
 
 ##### Predictions with test data (future) #####
 
@@ -77,13 +77,16 @@ bayesGLM_testpred(model=model, testdata=pres_testdata, N=100,
 
 ##### Training and Validation performance #####
 library(MLmetrics) 
+library(formattable)
+
+draws <- extract(model) # get the sample draws from model
 tr_probs <- draws$tr_probs
 val_probs <- draws$val_probs
 colnames(tr_probs) <- train_HID[["HID"]]
 colnames(val_probs) <- valid_HID[["HID"]]
 
-tr_probs_med <- apply(tr_probs, 2, median)
-val_probs_med <- apply(val_probs, 2, median)
+tr_probs_point <- apply(tr_probs, 2, mean)
+val_probs_point <- apply(val_probs, 2, mean)
 
 thres_candidates <- seq(0.01, 0.99, .01)
 f1_scores <- sapply(thres_candidates, 
@@ -92,8 +95,27 @@ f1_scores <- sapply(thres_candidates,
                                              positive = 1))
 thres <- thres_candidates[which.max(f1_scores)]
 
+# get the precision, recall, accuracy, and AUC scores
+trainpred <- ifelse(tr_probs_point > thres, 1, 0)
+trainprec <- round(Precision(train_labels[["PA"]], trainpred, positive = 1), 3)
+trainrec <- round(Recall(train_labels[["PA"]], trainpred, positive = 1), 3)
+trainacc <- round(Accuracy(trainpred, train_labels[["PA"]]), 3)
+trainauc <- round(AUC(trainpred, train_labels[["PA"]]), 3)
 
+valpred <- ifelse(val_probs_point > thres, 1, 0)
+valprec <- round(Precision(valid_labels[["PA"]], valpred, positive = 1), 3)
+valrec <- round(Recall(valid_labels[["PA"]], valpred, positive = 1), 3)
+valacc <- round(Accuracy(valpred, valid_labels[["PA"]]), 3)
+valauc <- round(AUC(valpred, valid_labels[["PA"]]), 3)
 
+# display the evaluation metrics as tables
+evals <- data.frame(Dataset = c("Training", "Validation"),
+                    Precision = c(trainprec, valprec),
+                    Recall = c(trainrec,  valrec),
+                    Accuracy = c(trainacc, valacc),
+                    AUC = c(trainauc, valauc)
+)
+formattable(evals)
 
 ##### Troubleshooting and Tuning #####
 

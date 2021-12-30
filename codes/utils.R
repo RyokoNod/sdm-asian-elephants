@@ -2,7 +2,7 @@ trainvalsplit <- function(master_data, train_prop, random_seed=123456){
   # <Overview>
   # Given a dataset, this function separates the data into training
   # and validation set. (validation set != test set)
-  # <Arguments>
+  # <Parameters>
   # master_data: master data with HID, climate features, and PA labels
   # train_prop: what proportion of data needs to be in training set
   # random_seed: the random seed for the split
@@ -45,6 +45,22 @@ trainvalsplit <- function(master_data, train_prop, random_seed=123456){
 }
 
 bayesGLM_testpred <- function(model, testdata, N, matrixpath, csvpath, seed=123456){
+  # <Overview>
+  # Creates and saves Bayesian logistic regression predictions for 
+  # the given model and input features
+  # (distribution, point prediction, interval information)
+  # <Parameters>
+  # model: The Stan model after inference
+  # testdata: The feature file for hexagonal grid (including HID)
+  # N: Number of samples per distribution
+  # matrixpath: Where you want your distribution matrix saved (file name)
+  # csvpath: Where you want your point predictions and interval info saved (file name)
+  # seed: Random seed for sampling
+  # <Returns>
+  # Does not return anything, but saves two output files.
+  # The file specified with matrixpath: The distribution matrix as rds
+  # The file specified with csvpath: The point predictions and intervals as csv
+  
   set.seed(seed)
   draws <- extract(model) # get the sample draws from model
   test_features <- subset(testdata, select=-c(HID)) # get the features from the model
