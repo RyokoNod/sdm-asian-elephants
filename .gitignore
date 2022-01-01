@@ -12,3 +12,4 @@ data_exploration/.ipynb_checkpoints/
 codes/.Rhistory
 
 *.rds
+.Rproj.user

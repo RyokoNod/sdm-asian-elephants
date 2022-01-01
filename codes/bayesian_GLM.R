@@ -76,54 +76,12 @@ bayesGLM_testpred(model=model, testdata=pres_testdata, N=100,
                   matrixpath=pres_test_matrixpath, csvpath=pres_test_csvpath, seed=random_seed)
 
 ##### Training and Validation performance #####
-library(MLmetrics) 
-library(formattable)
-
-draws <- extract(model) # get the sample draws from model
-tr_probs <- draws$tr_probs
-val_probs <- draws$val_probs
-colnames(tr_probs) <- train_HID[["HID"]]
-colnames(val_probs) <- valid_HID[["HID"]]
-
-tr_probs_point <- apply(tr_probs, 2, mean)
-val_probs_point <- apply(val_probs, 2, mean)
-
-thres_candidates <- seq(0.01, 0.99, .01)
-f1_scores <- sapply(thres_candidates, 
-                    function(thres) F1_Score(valid_labels[["PA"]], 
-                                             ifelse(val_probs_med >= thres, 1, 0), 
-                                             positive = 1))
-thres <- thres_candidates[which.max(f1_scores)]
-
-# get the precision, recall, accuracy, and AUC scores
-trainpred <- ifelse(tr_probs_point > thres, 1, 0)
-trainprec <- round(Precision(train_labels[["PA"]], trainpred, positive = 1), 3)
-trainrec <- round(Recall(train_labels[["PA"]], trainpred, positive = 1), 3)
-trainacc <- round(Accuracy(trainpred, train_labels[["PA"]]), 3)
-trainauc <- round(AUC(trainpred, train_labels[["PA"]]), 3)
-
-valpred <- ifelse(val_probs_point > thres, 1, 0)
-valprec <- round(Precision(valid_labels[["PA"]], valpred, positive = 1), 3)
-valrec <- round(Recall(valid_labels[["PA"]], valpred, positive = 1), 3)
-valacc <- round(Accuracy(valpred, valid_labels[["PA"]]), 3)
-valauc <- round(AUC(valpred, valid_labels[["PA"]]), 3)
-
-# display the evaluation metrics as tables
-evals <- data.frame(Dataset = c("Training", "Validation"),
-                    Precision = c(trainprec, valprec),
-                    Recall = c(trainrec,  valrec),
-                    Accuracy = c(trainacc, valacc),
-                    AUC = c(trainauc, valauc)
-)
+evals <- tranval_metrics(model=model, traindata=trainval$traindata, 
+                          valdata=trainval$validdata)
 formattable(evals)
 
-##### Troubleshooting and Tuning #####
 
-# names of columns in draws that contain coefficients and intercept
-coeff_names <- c("coeffs[1]","coeffs[2]","coeffs[3]","coeffs[4]","coeffs[5]", 
-                 "coeffs[6]","coeffs[7]","coeffs[8]","coeffs[9]","coeffs[10]",
-                 "intercept")
-
+##### Model statistics #####
 # see model statistics in shinystan
 my_sso <- launch_shinystan(model)
 

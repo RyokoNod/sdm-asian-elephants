@@ -102,8 +102,66 @@ bayesGLM_testpred <- function(model, testdata, N, matrixpath, csvpath, seed=1234
   write.csv(output_probs, csvpath, row.names=FALSE) # write outputs to CSV
 }
 
-
-
+tranval_metrics <- function(model, traindata, valdata, pointtype="mean", thres=NULL){
+  # <Overview>
+  # Computes precision, recall, accuracy, and AUC for trained Stan model outputs
+  # <Parameters>
+  # model: The Stan model after inference
+  # traindata: The training data, including HID and labels
+  # valdata: The validation data, including HID and labels
+  # pointtype: The point prediction type. The defauly is mean
+  # thres: The threshold for predicting positives. If NULL, chooses one that maximizes F1 score
+  # <Returns>
+  # A dataframe that includes the precision, recall, accuracy, and AUC for training and validation sets
+  
+  library(MLmetrics) 
+  library(formattable)
+  
+  draws <- extract(model) # get the sample draws from model
+  tr_probs <- draws$tr_probs
+  val_probs <- draws$val_probs
+  
+  train_HID <- subset(traindata, select=c(HID))
+  train_labels <- subset(traindata, select=c(PA))
+  valid_HID <- subset(valdata, select=c(HID))
+  valid_labels <- subset(valdata, select=c(PA))
+  
+  colnames(tr_probs) <- train_HID[["HID"]]
+  colnames(val_probs) <- valid_HID[["HID"]]
+  
+  tr_probs_point <- apply(tr_probs, 2, pointtype)
+  val_probs_point <- apply(val_probs, 2, pointtype)
+  
+  # if there is no threshold value specified, pick one that mazimizes F1 score
+  if (is.null(thres)){
+    thres_candidates <- seq(0.01, 0.99, .01)
+    f1_scores <- sapply(thres_candidates, 
+                        function(thres) F1_Score(valid_labels[["PA"]], 
+                                                 ifelse(val_probs_point >= thres, 1, 0), 
+                                                 positive = 1))
+    thres <- thres_candidates[which.max(f1_scores)]
+  }
+  
+  # get the precision, recall, accuracy, and AUC scores
+  trainpred <- ifelse(tr_probs_point > thres, 1, 0)
+  trainprec <- round(Precision(train_labels[["PA"]], trainpred, positive = 1), 3)
+  trainrec <- round(Recall(train_labels[["PA"]], trainpred, positive = 1), 3)
+  trainacc <- round(Accuracy(trainpred, train_labels[["PA"]]), 3)
+  trainauc <- round(AUC(trainpred, train_labels[["PA"]]), 3)
+  
+  valpred <- ifelse(val_probs_point > thres, 1, 0)
+  valprec <- round(Precision(valid_labels[["PA"]], valpred, positive = 1), 3)
+  valrec <- round(Recall(valid_labels[["PA"]], valpred, positive = 1), 3)
+  valacc <- round(Accuracy(valpred, valid_labels[["PA"]]), 3)
+  valauc <- round(AUC(valpred, valid_labels[["PA"]]), 3)
+  
+  evals <- data.frame(Dataset = c("Training", "Validation"),
+                      Precision = c(trainprec, valprec),
+                      Recall = c(trainrec,  valrec),
+                      Accuracy = c(trainacc, valacc),
+                      AUC = c(trainauc, valauc))
+  return(evals)  
+}
 
 
 
