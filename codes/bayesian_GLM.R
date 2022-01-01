@@ -47,10 +47,22 @@ data <- list(
 sm <- rstan::stan_model(file = "./bayesian_GLM.stan") # specifying where the Stan model is
 model <- rstan::sampling(sm, data=data, seed = random_seed,
                          control = list(adapt_delta = 0.99, max_treedepth = 10)) # run MCMC
-saveRDS(model, "bayesGLM_spatialCVfeat_model.rds") # save model so I can recover if R crashes
+
+# save model so I can recover if R crashes
+if (feature_type=="GLM"){
+  saveRDS(model, "bayesGLM_randCVfeat_model.rds") 
+}
+if (feature_type=="SGLM"){
+  saveRDS(model, "bayesGLM_spatialCVfeat_model.rds")
+}
 
 # load if R crashes
-model <- readRDS("bayesGLM_randCVfeat_model.rds") 
+if (feature_type=="GLM"){
+  model <- readRDS("bayesGLM_randCVfeat_model.rds") 
+}
+if (feature_type=="SGLM"){
+  model <- readRDS("bayesGLM_spatialCVfeat_model.rds") 
+}
 
 ##### Predictions with test data (future) #####
 
@@ -68,7 +80,6 @@ bayesGLM_testpred(model=model, testdata=testdata, N=100,
 
 pres_testdata <- read.csv(pres_testfile, header=TRUE) # import the present climate variables
 
-# setup filepaths to save results
 pres_test_matrixpath <- paste(resultfolder,'presbayesGLM_pred_',feature_type,'_',random_seed,'.rds',sep='')
 pres_test_csvpath <- paste(resultfolder,'results_pres_',feature_type,'_', random_seed, '.csv',sep='')
 
