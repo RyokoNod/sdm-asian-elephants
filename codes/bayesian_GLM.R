@@ -57,21 +57,38 @@ model <- rstan::sampling(sm, data=data, seed = random_seed,
                          control = list(adapt_delta = 0.99, max_treedepth = 10)) # run MCMC
 
 # save model so I can recover if R crashes
-if (feature_type=="GLM"){
-  saveRDS(model, "bayesGLM_norm_randCVfeat_model.rds") 
-}
-if (feature_type=="SGLM"){
-  saveRDS(model, "bayesGLM_norm_spatialCVfeat_model.rds")
+if (normalize==TRUE){
+  if (feature_type=="GLM"){
+    saveRDS(model, "bayesGLM_norm_randCVfeat_model.rds") 
+  }
+  if (feature_type=="SGLM"){
+    saveRDS(model, "bayesGLM_norm_spatialCVfeat_model.rds")
+  }
+} else{
+  if (feature_type=="GLM"){
+    saveRDS(model, "bayesGLM_randCVfeat_model.rds") 
+  }
+  if (feature_type=="SGLM"){
+    saveRDS(model, "bayesGLM_spatialCVfeat_model.rds")
+  }
 }
 
 # load if R crashes
-if (feature_type=="GLM"){
-  model <- readRDS("bayesGLM_norm_randCVfeat_model.rds") 
+if (normalize==TRUE){
+  if (feature_type=="GLM"){
+    model <- readRDS("bayesGLM_norm_randCVfeat_model.rds") 
+  }
+  if (feature_type=="SGLM"){
+    model <- readRDS("bayesGLM_norm_spatialCVfeat_model.rds") 
+  }
+} else {
+  if (feature_type=="GLM"){
+    model <- readRDS("bayesGLM_randCVfeat_model.rds") 
+  }
+  if (feature_type=="SGLM"){
+    model <- readRDS("bayesGLM_spatialCVfeat_model.rds") 
+  }
 }
-if (feature_type=="SGLM"){
-  model <- readRDS("bayesGLM_norm_spatialCVfeat_model.rds") 
-}
-
 ##### Predictions with test data (future) #####
 
 testdata <- read.csv(testfile, header=TRUE) # import the future climate variables
