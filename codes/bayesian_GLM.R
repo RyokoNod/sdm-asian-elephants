@@ -1,15 +1,17 @@
+library(caret)
 library(rstan)
 library(loo)
-source("utils.R")
 library(shinystan)
+source("utils.R")
 options(mc.cores=parallel::detectCores())  # use all available cores
 
 random_seed = 12244 # set random seed
 datafolder <- '../data/Modeling_Data/'
 resultfolder <- '../data/Results/Bayesian_GLM/'
 
-# GLM for random CV feature set, SGLM for spatial CV feature set
-feature_type <- 'SGLM'
+# settings
+feature_type <- 'SGLM' # GLM for random CV feature set, SGLM for spatial CV feature set
+normalize <- TRUE # TRUE if you want to normalize the data
 
 trainfile <- paste(datafolder,'traindata_',feature_type,'.csv',sep='')
 testfile <- paste(datafolder,'testdata_',feature_type,'.csv',sep='')
@@ -31,6 +33,12 @@ valid_features <- subset(trainval$validdata, select=-c(HID, PA))
 valid_labels <- subset(trainval$validdata, select=c(PA))
 valid_HID <- subset(trainval$validdata, select=c(HID))
 
+# if specified, normalize the data
+if (normalize==TRUE){
+  preProc <- preProcess(train_features, method=c("range"))
+  train_features <- predict(preProc, train_features)
+}
+
 ##### Running Stan model #####
 
 # prepare data for use in Stan
@@ -50,23 +58,30 @@ model <- rstan::sampling(sm, data=data, seed = random_seed,
 
 # save model so I can recover if R crashes
 if (feature_type=="GLM"){
-  saveRDS(model, "bayesGLM_randCVfeat_model.rds") 
+  saveRDS(model, "bayesGLM_norm_randCVfeat_model.rds") 
 }
 if (feature_type=="SGLM"){
-  saveRDS(model, "bayesGLM_spatialCVfeat_model.rds")
+  saveRDS(model, "bayesGLM_norm_spatialCVfeat_model.rds")
 }
 
 # load if R crashes
 if (feature_type=="GLM"){
-  model <- readRDS("bayesGLM_randCVfeat_model.rds") 
+  model <- readRDS("bayesGLM_norm_randCVfeat_model.rds") 
 }
 if (feature_type=="SGLM"){
-  model <- readRDS("bayesGLM_spatialCVfeat_model.rds") 
+  model <- readRDS("bayesGLM_norm_spatialCVfeat_model.rds") 
 }
 
 ##### Predictions with test data (future) #####
 
 testdata <- read.csv(testfile, header=TRUE) # import the future climate variables
+
+# if specified, normalize data
+if (normalize==TRUE){
+  test_HID <- subset(testdata, select=HID)
+  testdata <- predict(preProc, testdata[,2:dim(testdata)[2]])
+  testdata <- cbind(test_HID,testdata)
+}
 
 # setup filepaths to save results
 test_matrixpath <- paste(resultfolder,'bayesGLM_pred_',feature_type,'_',random_seed,'.rds',sep='')
@@ -80,6 +95,13 @@ bayesGLM_testpred(model=model, testdata=testdata, N=100,
 
 pres_testdata <- read.csv(pres_testfile, header=TRUE) # import the present climate variables
 
+# if specified, normalize data
+if (normalize==TRUE){
+  prestest_HID <- subset(pres_testdata, select=HID)
+  pres_testdata <- predict(preProc, pres_testdata[,2:dim(pres_testdata)[2]])
+  pres_testdata <- cbind(test_HID,pres_testdata)
+}
+
 pres_test_matrixpath <- paste(resultfolder,'presbayesGLM_pred_',feature_type,'_',random_seed,'.rds',sep='')
 pres_test_csvpath <- paste(resultfolder,'results_pres_',feature_type,'_', random_seed, '.csv',sep='')
 
@@ -87,7 +109,7 @@ bayesGLM_testpred(model=model, testdata=pres_testdata, N=100,
                   matrixpath=pres_test_matrixpath, csvpath=pres_test_csvpath, seed=random_seed)
 
 ##### Training and Validation performance #####
-evals <- tranval_metrics(model=model, traindata=trainval$traindata, 
+evals <- trainval_metrics(model=model, traindata=trainval$traindata, 
                           valdata=trainval$validdata)
 formattable(evals)
 

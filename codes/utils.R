@@ -102,7 +102,7 @@ bayesGLM_testpred <- function(model, testdata, N, matrixpath, csvpath, seed=1234
   write.csv(output_probs, csvpath, row.names=FALSE) # write outputs to CSV
 }
 
-tranval_metrics <- function(model, traindata, valdata, pointtype="mean", thres=NULL){
+trainval_metrics <- function(model, traindata, valdata, pointtype="mean", thres=NULL){
   # <Overview>
   # Computes precision, recall, accuracy, and AUC for trained Stan model outputs
   # <Parameters>
