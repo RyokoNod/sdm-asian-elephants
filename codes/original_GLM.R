@@ -2,10 +2,10 @@ library(caret)
 library(MLmetrics)
 library(formattable)
 source("utils.R")
-random_seed = 46952 # set random seed
+random_seed = 19924 # set random seed
 datafolder <- '../data/Modeling_Data/'
-resultfolder <- '../data/Results/Original_SGLM/'
-mode <- 'SGLM' # set 'GLM' or 'SGLM' to switch feature sets
+resultfolder <- '../data/Results/Original_GLM/'
+mode <- 'GLM' # set 'GLM' or 'SGLM' to switch feature sets
 
 trainfile <- paste(datafolder,'traindata_',mode,'.csv',sep='')
 testfile <- paste(datafolder,'testdata_',mode,'.csv',sep='')
@@ -100,3 +100,10 @@ names(pres_testpred) <- c('HID', 'probs', 'pred_labels')
 pres_resultfile <- paste(resultfolder,'results_present_',mode,'_seed', random_seed, 
                     '_thres', thres*100,'.csv',sep='')
 write.csv(pres_testpred, pres_resultfile, row.names=FALSE)
+
+##### Calibration plot #####
+
+calPlotData<-calibration(factor(validdata$PA) ~ valpred_probs, 
+                         data = data.frame(pred=valpred_probs, y=validdata$PA), 
+                         cuts=10, class="1")
+ggplot(calPlotData)

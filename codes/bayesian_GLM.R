@@ -5,19 +5,20 @@ library(shinystan)
 source("utils.R")
 options(mc.cores=parallel::detectCores())  # use all available cores
 
+# settings
 random_seed = 12244 # set random seed
 datafolder <- '../data/Modeling_Data/'
 resultfolder <- '../data/Results/Bayesian_GLM/'
-
-# settings
 feature_type <- 'GLM' # GLM for random CV feature set, SGLM for spatial CV feature set
 normalize <- TRUE # TRUE if you want to normalize the data
 
+# specify file names for data
 trainfile <- paste(datafolder,'traindata_',feature_type,'.csv',sep='')
 testfile <- paste(datafolder,'testdata_',feature_type,'.csv',sep='')
 pres_testfile <- paste(datafolder,'testdata_pres_',feature_type,'.csv',sep='') # present day climatic
 
-##### Preparing the training, validation, and test data #####
+# Preparing the training, validation, and test data -----------------------
+
 
 # import the present-day climate variables with Asian elephant presence
 traindata_master <- read.csv(trainfile, header=TRUE)
@@ -39,7 +40,8 @@ if (normalize==TRUE){
   train_features <- predict(preProc, train_features)
 }
 
-##### Running Stan model #####
+# Running Stan model ------------------------------------------------------
+
 
 # prepare data for use in Stan
 data <- list(
@@ -89,7 +91,8 @@ if (normalize==TRUE){
     model <- readRDS("bayesGLM_spatialCVfeat_model.rds") 
   }
 }
-##### Predictions with test data (future) #####
+# Predictions with test data (future) -------------------------------------
+
 
 testdata <- read.csv(testfile, header=TRUE) # import the future climate variables
 
@@ -108,7 +111,8 @@ test_csvpath <- paste(resultfolder,'results_norm_',feature_type,'_', random_seed
 bayesGLM_testpred(model=model, testdata=testdata, N=100, 
                   matrixpath=test_matrixpath, csvpath=test_csvpath, seed=random_seed)
 
-##### Predictions with test data (present) #####
+# Predictions with test data (present) ------------------------------------
+
 
 pres_testdata <- read.csv(pres_testfile, header=TRUE) # import the present climate variables
 
@@ -125,14 +129,28 @@ pres_test_csvpath <- paste(resultfolder,'results_pres_norm_',feature_type,'_', r
 bayesGLM_testpred(model=model, testdata=pres_testdata, N=100, 
                   matrixpath=pres_test_matrixpath, csvpath=pres_test_csvpath, seed=random_seed)
 
-##### Training and Validation performance #####
-evals <- trainval_metrics(model=model, traindata=trainval$traindata, 
+# Training and Validation performance -------------------------------------
+
+
+evals <- bayes_trainval_metrics(model=model, traindata=trainval$traindata, 
                           valdata=trainval$validdata)
 formattable(evals)
 
 
-##### Model statistics #####
+# Model statistics --------------------------------------------------------
+
+
 # see model statistics in shinystan
 my_sso <- launch_shinystan(model)
 
+##### Calibration plot #####
+
+draws <- extract(model) # get the sample draws from model
+val_probs <- draws$val_probs
+val_probs_point <- apply(val_probs, 2, "median")
+
+calPlotData<-calibration(factor(valid_labels$PA) ~ val_probs_point, 
+                         data = data.frame(pred=val_probs_point, y=valid_labels), 
+                         cuts=10, class="1")
+ggplot(calPlotData)
 
