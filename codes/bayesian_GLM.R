@@ -38,6 +38,7 @@ valid_HID <- subset(trainval$validdata, select=c(HID))
 if (normalize==TRUE){
   preProc <- preProcess(train_features, method=c("range"))
   train_features <- predict(preProc, train_features)
+  valid_features <- predict(preProc, valid_features)
 }
 
 # Running Stan model ------------------------------------------------------
