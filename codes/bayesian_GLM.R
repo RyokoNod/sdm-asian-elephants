@@ -9,8 +9,8 @@ options(mc.cores=parallel::detectCores())  # use all available cores
 random_seed = 12244 # set random seed
 datafolder <- '../data/Modeling_Data/'
 resultfolder <- '../data/Results/Bayesian_GLM/'
-feature_type <- 'SGLM' # GLM for random CV feature set, SGLM for spatial CV feature set
-normalize <- TRUE # TRUE if you want to normalize the data
+feature_type <- 'GLM' # GLM for random CV feature set, SGLM for spatial CV feature set
+normalize <- FALSE # TRUE if you want to normalize the data
 
 # specify file names for data
 trainfile <- paste(datafolder,'traindata_',feature_type,'.csv',sep='')
