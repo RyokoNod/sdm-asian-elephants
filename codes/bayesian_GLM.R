@@ -146,6 +146,20 @@ my_sso <- launch_shinystan(model)
 
 ##### Calibration plot #####
 
+if (feature_type=="GLM"){
+  unnorm_model <- readRDS("bayesGLM_randCVfeat_model.rds") 
+  norm_model <- readRDS("bayesGLM_norm_randCVfeat_model.rds") 
+}
+if (feature_type=="SGLM"){
+  unnorm_model <- readRDS("bayesGLM_spatialCVfeat_model.rds") 
+  norm_model <- readRDS("bayesGLM_norm_spatialCVfeat_model.rds") 
+}
+
+bayes_lr_calibration(unnorm_model=unnorm_model, norm_model=norm_model, 
+                     traindata=trainval$traindata, validdata=trainval$validdata, 
+                     pointtype="median")
+
+## If I only want a single plot, use code from here
 draws <- extract(model) # get the sample draws from model
 val_probs <- draws$val_probs
 val_probs_point <- apply(val_probs, 2, "median")

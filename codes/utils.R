@@ -109,7 +109,7 @@ bayes_trainval_metrics <- function(model, traindata, valdata, pointtype="mean", 
   # model: The Stan model after inference
   # traindata: The training data, including HID and labels
   # valdata: The validation data, including HID and labels
-  # pointtype: The point prediction type. The defauly is mean
+  # pointtype: The point prediction type. The default is mean
   # thres: The threshold for predicting positives. If NULL, chooses one that maximizes F1 score
   # <Returns>
   # A dataframe that includes the precision, recall, accuracy, and AUC for training and validation sets
@@ -163,8 +163,40 @@ bayes_trainval_metrics <- function(model, traindata, valdata, pointtype="mean", 
   return(evals)  
 }
 
-
-
-
-
-
+bayes_lr_calibration <- function(unnorm_model, norm_model, traindata, validdata, pointtype="mean"){
+  # <Overview>
+  # Plots calibrations for non-Bayesian logistic regression, Bayesian logistic regression with 
+  # unnormalized features, and Bayesian logistic regression with normalized features all in one plot.
+  # This is not a multi-purpose function, and can only be used in this specific context.
+  # <Parameters>
+  # unnorm_model: The Stan model with unnormalized features after inference
+  # nnorm_model: The Stan model with normalized features after inference
+  # traindata: The training data, including HID and labels
+  # validdata: The validation data, including HID and labels
+  # pointtype: The point prediction type. The default is mean
+  # <Returns>
+  # No return value. This function is just for plotting the calibration plot.
+  
+  valid_labels <- subset(validdata, select=c(PA)) # the labels for the validation data
+  
+  # get outputs for standard logistic regression
+  logreg <- glm(formula=PA ~.,
+                data=traindata[ , !(colnames(traindata) %in% c("HID"))],
+                family=binomial)
+  stlr_valprobs <- predict(logreg,newdata=validdata, type="response")
+  
+  un_draws <- extract(unnorm_model)
+  un_valprob_pts <- apply(un_draws$val_probs, 2, pointtype)
+  n_draws <- extract(norm_model)
+  n_valprob_pts <- apply(n_draws$val_probs, 2, pointtype)
+  
+  
+  calPlotData<-calibration(factor(valid_labels$PA) ~ standard_logreg + unnormalized_Bayesian + normalized_Bayesian, 
+                           data = data.frame(standard_logreg=stlr_valprobs,
+                                             unnormalized_Bayesian=un_valprob_pts, 
+                                             normalized_Bayesian=n_valprob_pts,
+                                             y=factor(valid_labels$PA)), 
+                           cuts=10, class="1", auto.key = list(columns = 2))
+  ggplot(calPlotData)
+  
+}
