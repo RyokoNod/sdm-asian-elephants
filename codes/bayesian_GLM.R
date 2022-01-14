@@ -86,7 +86,7 @@ if (normalize==TRUE){
   }
 } else {
   if (feature_type=="GLM"){
-    model <- readRDS("bayesGLM_randCVfeat_model.rds") 
+    model <- readRDS("bayesGLM_randCVfeat_model_TD11.rds") 
   }
   if (feature_type=="SGLM"){
     model <- readRDS("bayesGLM_spatialCVfeat_model.rds") 
@@ -147,7 +147,7 @@ my_sso <- launch_shinystan(model)
 ##### Calibration plot #####
 
 if (feature_type=="GLM"){
-  unnorm_model <- readRDS("bayesGLM_randCVfeat_model.rds") 
+  unnorm_model <- readRDS("bayesGLM_randCVfeat_model_TD11.rds") 
   norm_model <- readRDS("bayesGLM_norm_randCVfeat_model.rds") 
 }
 if (feature_type=="SGLM"){
