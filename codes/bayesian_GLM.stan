@@ -25,18 +25,8 @@ model{
 }
 
 generated quantities{
-  //vector[Ntr] tr_pred;
-  //vector[Nval] val_pred;
   vector[Ntr] tr_probs;
   vector[Nval] val_probs;
-  
-  //output that gives draws of binary predictions for data
-  //for (i in 1:Ntr){
-  //  tr_pred[i]  = bernoulli_rng(inv_logit(intercept + dot_product(x[i,], coeffs)));
-  //}
-  //for (i in 1:Nval){
-  //  val_pred[i]  = bernoulli_rng(inv_logit(intercept + dot_product(x_val[i,], coeffs)));
-  //}
   
   //output that gives draws of the probability of being classified as positive
   for (i in 1:Ntr){
