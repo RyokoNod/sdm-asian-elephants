@@ -13,3 +13,5 @@ codes/.Rhistory
 
 *.rds
 .Rproj.user
+
+data/Modeling_Data/.ipynb_checkpoints/
