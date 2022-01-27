@@ -200,3 +200,39 @@ bayes_lr_calibration <- function(unnorm_model, norm_model, traindata, validdata,
   ggplot(calPlotData)
   
 }
+
+TSS <- function(predlbls, truelbls, pos="1", neg="0"){
+  sens <- sensitivity(as.factor(predlbls), as.factor(truelbls), positive=pos)
+  spec <- specificity(as.factor(predlbls), as.factor(truelbls), negative=neg)
+  
+  return(sens + spec - 1)
+}
+
+maxTSS_scores <- function(preds, truelbls, pos="1", neg="0"){
+  thres_candidates <- seq(0.01, 0.99, .01)
+  tss_scores <- sapply(thres_candidates, 
+                      function(thres) TSS(ifelse(preds >= thres, 1, 0), 
+                                          truelbls,
+                                          pos=pos, neg=neg))
+  
+  maxth <- thres_candidates[which.max(tss_scores)]
+  predlbls <- ifelse(preds >= maxth, 1, 0)
+  
+  maxsens <- sensitivity(as.factor(predlbls), as.factor(truelbls), positive=pos)
+  maxspec <- specificity(as.factor(predlbls), as.factor(truelbls), negative=neg)
+  maxTSS <- TSS(as.factor(predlbls), as.factor(truelbls), pos=pos, neg=neg)
+  
+  maxscores <- list("TSS"=maxTSS, "sensitivity"=maxsens, "specificity"=maxspec)
+  return(maxscores)
+  
+}
+
+
+
+
+
+
+
+
+
+
