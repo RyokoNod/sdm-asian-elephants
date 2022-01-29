@@ -8,7 +8,7 @@ source("../utils.R")
 random_seed = 12244 # set random seed
 datafolder <- '../../data/Modeling_Data/'
 resultfolder <- '../../data/Results/Standard_RF/'
-mode <- 'GLM' # set 'GLM' or 'SGLM' to switch feature sets
+mode <- 'SGLM' # set 'GLM' or 'SGLM' to switch feature sets
 niter <- 100 # each prediction is the mean of niter random forests
 
 trainfile <- paste(datafolder,'traindata_',mode,'.csv',sep='')
@@ -31,7 +31,7 @@ val_evals <- matrix(nrow=nfolds, ncol=length(eval_metrics))
 colnames(train_evals)<- eval_metrics
 colnames(val_evals)<- eval_metrics
 
-valpreds_all <- data.frame() # an empty data frame to stoe validation predictions
+valpreds_all <- data.frame() # an empty data frame to store validation predictions
 
 for (f in 1:nfolds){
   # create training data and validation data for each fold
@@ -72,13 +72,17 @@ for (f in 1:nfolds){
   val_evals[f, "specificity"] <- val_TSSscores$specificity
 }
 
-# I will use this later for calibration plots
+# Save the validation predictions because RStudio tends to crash after this point
+# I will use these later for calibration plots
 valpreds_all <- merge(subset(traindata_master, select=c(HID, PA)), valpreds_all, by="HID")
+valpreds_file <-  paste(resultfolder,'valpreds_RF_',mode,'_seed', random_seed, 
+                        '.csv',sep='')
+write.csv(valpreds_all, valpreds_file, row.names=FALSE)
 
 # the final evaluation scores are the mean of the CV folds
 evals <- t(data.frame(apply(train_evals, 2, mean), apply(val_evals, 2, mean)))
-row.names(evals) <- c("Training", "Validation")
 evals <- data.frame(evals) %>% mutate_if(is.numeric, round, digits=3)
+row.names(evals) <- c("Training", "Validation")
 
 formattable(evals) # display scores
 
@@ -138,6 +142,11 @@ write.csv(testpred, resultfile, row.names=FALSE)
 
 # Calibration plots -------------------------------------------------------
 
+# load in case RStudio crashed
+valpreds_file <-  paste(resultfolder,'valpreds_RF_',mode,'_seed', random_seed, 
+                        '.csv',sep='')
+valpreds_all <- read.csv(valpreds_file)
+
 # traditional calibration plot with 10 bins
 calPlotData<-calibration(factor(valpreds_all$PA) ~ random_forest, 
                          data = data.frame(random_forest=valpreds_all$valpred,
@@ -147,7 +156,7 @@ ggplot(calPlotData)
 
 # the new calibration plot by Dimitriadis et al. 2021
 newcalPlot <- reliabilitydiag(EMOS = valpreds_all$valpred, y = valpreds_all$PA)
-autoplot(newcalPlot)+
+reliabilitydiag::autoplot(newcalPlot)+
   labs(x="Predicted Probabilities",
        y="Conditional event probabilities")+
   bayesplot::theme_default(base_family = "sans")
