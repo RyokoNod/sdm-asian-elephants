@@ -202,6 +202,10 @@ bayes_lr_calibration <- function(unnorm_model, norm_model, traindata, validdata,
 }
 
 TSS <- function(predlbls, truelbls, pos="1", neg="0"){
+  # <Overview>
+  # Calculates the True Skill Statistic (sensitivity + specificity - 1)
+  # <Parameters>
+  # predlbls: The predicted binarylabels for the dataset (labels, not probabilities)
   sens <- sensitivity(as.factor(predlbls), as.factor(truelbls), positive=pos)
   spec <- specificity(as.factor(predlbls), as.factor(truelbls), negative=neg)
   
