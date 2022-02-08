@@ -13,9 +13,9 @@ random_seed = 12244 # set random seed
 datafolder <- '../../data/Modeling_Data/'
 resultfolder <- '../../data/Results/Bayesian_GLM/'
 feature_type <- 'GLM' # GLM for random CV feature set, SGLM for spatial CV feature set
-normalize <- FALSE # TRUE if you want to normalize the data
+normalize <- TRUE # TRUE if you want to normalize the data
 adapt_d <- 0.99
-treedepth <- 11
+treedepth <- 10
 
 # specify file names for data
 trainfile <- paste(datafolder,'traindata_',feature_type,'.csv',sep='')
