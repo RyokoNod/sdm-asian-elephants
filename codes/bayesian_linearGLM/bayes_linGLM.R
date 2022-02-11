@@ -306,4 +306,14 @@ reliabilitydiag::autoplot(newcalPlot)+
 
 
 
+# separate the labels and features from the master training data
+train_features <- subset(traindata_master, select=-c(HID, Folds, PA))
+train_labels <- subset(traindata_master, select=c(PA))
+
+make_stancode(formula=formula, 
+    data=cbind(train_features, train_labels),
+    family=bernoulli(link="logit"),
+    prior=priors,
+    save_model="brms_bayeslinGLM.stan"
+)
 

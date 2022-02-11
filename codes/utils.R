@@ -44,7 +44,7 @@ trainvalsplit <- function(master_data, train_prop, random_seed=123456){
   return(trainval)
 }
 
-bayesGLM_testpred <- function(model, testdata, N, matrixpath, csvpath, seed=123456){
+bayesGLM_testpred <- function(model, testdata, N, matrixpath, csvpath, replace=FALSE, bernoulli_draws= FALSE, seed=123456){
   # <Overview>
   # Creates and saves Bayesian logistic regression predictions for 
   # the given model and input features
@@ -72,29 +72,33 @@ bayesGLM_testpred <- function(model, testdata, N, matrixpath, csvpath, seed=1234
   nhex <- dim(test_features)[1] # number of hexagons in test data
   nfeatures <-dim(test_features)[2] # number of features in test data
   
-  intercept_samples <- sample(intercept_post, size = N) # get samples for intercept
+  intercept_samples <- sample(intercept_post, size = N, replace=replace) # get samples for intercept
   
   # get samples for coefficients
   coeff_samples <- matrix(0, N, nfeatures)
   for (i in seq(1:nfeatures)){
-    coeff_samples[,i] <- sample(coeffs_post[,i], size = N)
+    coeff_samples[,i] <- sample(coeffs_post[,i], size = N, replace=replace)
   }
   
   # get the prediction draws
-  probs_matrix <- matrix(0, N, nhex)
+  preds_matrix <- matrix(0, N, nhex)
   for (i in seq(1:N)){
     logreg_line <- rowSums(matrix(rep(coeff_samples[i,],each=nhex),nrow=nhex) * test_features) + intercept_samples[i]
-    probs_matrix[i,] <- 1/(1 + exp(-logreg_line))
+    if (bernoulli_draws==TRUE){
+      preds_matrix[i,] <- rbinom(nhex, 1, 1/(1 + exp(-logreg_line)))
+    }else{
+      preds_matrix[i,] <- 1/(1 + exp(-logreg_line))
+    }
   }
-  saveRDS(probs_matrix, matrixpath) #save the prediction draws
+  saveRDS(preds_matrix, matrixpath) #save the prediction draws
   
   # prepare the output data: median, mean, CI (95%), CI width, standard deviation
-  median_probs <- as.data.frame(apply(probs_matrix, 2, median))
-  mean_probs <- as.data.frame(apply(probs_matrix, 2, mean))
-  cilow_probs <- as.data.frame(apply(probs_matrix, 2, quantile, probs=c(0.025)))
-  cihigh_probs <- as.data.frame(apply(probs_matrix, 2, quantile, probs=c(0.975)))
+  median_probs <- as.data.frame(apply(preds_matrix, 2, median))
+  mean_probs <- as.data.frame(apply(preds_matrix, 2, mean))
+  cilow_probs <- as.data.frame(apply(preds_matrix, 2, quantile, probs=c(0.025)))
+  cihigh_probs <- as.data.frame(apply(preds_matrix, 2, quantile, probs=c(0.975)))
   ci_size <-cihigh_probs - cilow_probs
-  sd_probs <- as.data.frame(apply(probs_matrix, 2, sd))
+  sd_probs <- as.data.frame(apply(preds_matrix, 2, sd))
   output_probs <- cbind(subset(testdata,select=HID), median_probs, mean_probs, 
                         cilow_probs, cihigh_probs, ci_size, sd_probs)
   colnames(output_probs) <- c("HID", "median_probs","mean_probs", "cilow", 
