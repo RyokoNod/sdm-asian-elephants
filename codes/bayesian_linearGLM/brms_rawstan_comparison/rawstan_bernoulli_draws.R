@@ -1,3 +1,16 @@
+# This script was made to check why there is a difference between
+# my old Stan implementation of Bayesian linear GLM codes/old/bayesian_GLM.stan
+# and the BRMS version of Bayesian linear GLM using brm().
+# It uses the models created from the old implementation and 
+# produces different versions of the test data prediction, future and present:
+# 1. Final output draws are binary Bernoulli draws like the BRMS implementation
+# 2. Final output draws are distributions of probabilities but draws are increased from 100->1000
+# 3. Final output draws are Bernoulli and draws are increased
+
+# Feb 11, 2022: 
+# It makes no difference whether the original implementation's output distribution
+# or draw size is changed. My original models' outputs still have a mismatch with
+# the BRMS models.
 library(caret)
 library(rstan)
 source("../../utils.R")
