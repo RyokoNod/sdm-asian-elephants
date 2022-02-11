@@ -55,6 +55,8 @@ bayesGLM_testpred <- function(model, testdata, N, matrixpath, csvpath, replace=F
   # N: Number of samples per distribution
   # matrixpath: Where you want your distribution matrix saved (file name)
   # csvpath: Where you want your point predictions and interval info saved (file name)
+  # replace: Whether to sample with replacement
+  # bernoulli_draws: Setting this to TRUE will makee the draws either 0 or 1
   # seed: Random seed for sampling
   # <Returns>
   # Does not return anything, but saves two output files.

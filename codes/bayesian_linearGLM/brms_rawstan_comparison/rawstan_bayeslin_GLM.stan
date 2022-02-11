@@ -1,3 +1,4 @@
+// This file is the same as bayesian_GLM.stan in codes/old
 data{
   int <lower=0> K; //the number of features for each hexagon
   int <lower=0> Ntr; //the number of hexagons in training set
