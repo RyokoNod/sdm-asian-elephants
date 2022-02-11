@@ -71,7 +71,7 @@ if (normalize==TRUE){
 }
 bayesGLM_testpred(model=model, testdata=testdata, N=100, 
                   matrixpath=test_matrixpath, csvpath=test_csvpath, 
-                  replace=FALSE, bernoulli_draws= TRUE, seed=random_seed)
+                  replace=TRUE, bernoulli_draws= TRUE, seed=random_seed)
 
 # Keeping the draws as probabilities, increasing sample size
 if (normalize==TRUE){
@@ -83,7 +83,7 @@ if (normalize==TRUE){
 }
 bayesGLM_testpred(model=model, testdata=testdata, N=1000, 
                   matrixpath=test_matrixpath, csvpath=test_csvpath, 
-                  replace=FALSE, bernoulli_draws= FALSE, seed=random_seed)
+                  replace=TRUE, bernoulli_draws= FALSE, seed=random_seed)
 
 
 # Changing to Bernoulli draws AND increasing sample size
@@ -96,7 +96,7 @@ if (normalize==TRUE){
 }
 bayesGLM_testpred(model=model, testdata=testdata, N=1000, 
                   matrixpath=test_matrixpath, csvpath=test_csvpath, 
-                  replace=FALSE, bernoulli_draws= TRUE, seed=random_seed)
+                  replace=TRUE, bernoulli_draws= TRUE, seed=random_seed)
 
 
 
@@ -122,7 +122,7 @@ if (normalize==TRUE){
 }
 bayesGLM_testpred(model=model, testdata=pres_testdata, N=100, 
                   matrixpath=pres_test_matrixpath, csvpath=pres_test_csvpath, 
-                  replace=FALSE, bernoulli_draws= TRUE, seed=random_seed)
+                  replace=TRUE, bernoulli_draws= TRUE, seed=random_seed)
 
 # Keeping the draws as probabilities, increasing sample size
 if (normalize==TRUE){
@@ -134,7 +134,7 @@ if (normalize==TRUE){
 }
 bayesGLM_testpred(model=model, testdata=pres_testdata, N=1000, 
                   matrixpath=pres_test_matrixpath, csvpath=pres_test_csvpath, 
-                  replace=FALSE, bernoulli_draws= FALSE, seed=random_seed)
+                  replace=TRUE, bernoulli_draws= FALSE, seed=random_seed)
 
 # Changing to Bernoulli draws AND increasing sample size
 if (normalize==TRUE){
@@ -146,7 +146,7 @@ if (normalize==TRUE){
 }
 bayesGLM_testpred(model=model, testdata=pres_testdata, N=1000, 
                   matrixpath=pres_test_matrixpath, csvpath=pres_test_csvpath, 
-                  replace=FALSE, bernoulli_draws= TRUE, seed=random_seed)
+                  replace=TRUE, bernoulli_draws= TRUE, seed=random_seed)
 
 
 
