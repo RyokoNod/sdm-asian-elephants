@@ -11,11 +11,11 @@ normalize <- FALSE # TRUE if you want to normalize the data
 
 
 # Draw functions -----------------------------------------------------------
-brmsGLM_testpred1 <- function(model, testdata, matrixpath, csvpath, N=100){
+brmsGLM_testpred1 <- function(model, test_data, matrixpath, csvpath, N=100){
   
   # the function using posterior_linpred
   preds_matrix <- posterior_linpred(model, transform=TRUE, ndraws=N,
-                                    newdata=subset(testdata,select=-c(HID)))
+                                    newdata=subset(test_data,select=-c(HID)))
   saveRDS(preds_matrix, matrixpath) #save the prediction draws
   
   # prepare the output data: median, mean, CI (95%), CI width, standard deviation
@@ -32,11 +32,11 @@ brmsGLM_testpred1 <- function(model, testdata, matrixpath, csvpath, N=100){
   write.csv(output_probs, csvpath, row.names=FALSE) # write outputs to CSV
 }
 
-brmsGLM_testpred2 <- function(model, testdata, matrixpath, csvpath, N=100){
+brmsGLM_testpred2 <- function(model, test_data, matrixpath, csvpath, N=100){
   # this one is self-implemented. It predicts from separate individual
   # draws for each feature. It turned out to be faulty.
   draws <- extract(model$fit) # get the sample draws from model
-  test_features <- subset(testdata, select=-c(HID)) # get the features from the model
+  test_features <- subset(test_data, select=-c(HID)) # get the features from the model
   
   # get the posterior distributions from the fitted model
   intercept_post <- draws$b[,1]
@@ -75,11 +75,11 @@ brmsGLM_testpred2 <- function(model, testdata, matrixpath, csvpath, N=100){
   write.csv(output_probs, csvpath, row.names=FALSE) # write outputs to CSV
 }
 
-brmsGLM_testpred3 <- function(model, testdata, matrixpath, csvpath, N=100){
+brmsGLM_testpred3 <- function(model, test_data, matrixpath, csvpath, N=100){
   # this one is self-implemented with independent draws of rows
   # for the posterior distribution matrix. This turned out to be the correct implementation
   draws <- extract(model$fit) # get the sample draws from model
-  test_features <- subset(testdata, select=-c(HID)) # get the features from the model
+  test_features <- subset(test_data, select=-c(HID)) # get the features from the model
   
   row_sample_ind <- sample(seq_len(nrow(draws$b)), size = N)
   
@@ -172,7 +172,7 @@ if (normalize==TRUE){
   test_matrixpath <- paste(resultfolder,'brms_bayesGLM_pred_unnorm_',feature_type,'_',random_seed,'_probdraws1.rds',sep='')
   test_csvpath <- paste(resultfolder,'brms_results_unnorm_',feature_type,'_', random_seed, '_probdraws1.csv',sep='')
 }
-brmsGLM_testpred1(model=model, testdata=testdata, 
+brmsGLM_testpred1(model=model, test_data=testdata, 
                   matrixpath=test_matrixpath, csvpath=test_csvpath)
 
 # prediction function 2
@@ -183,7 +183,7 @@ if (normalize==TRUE){
   test_matrixpath <- paste(resultfolder,'brms_bayesGLM_pred_unnorm_',feature_type,'_',random_seed,'_probdraws2.rds',sep='')
   test_csvpath <- paste(resultfolder,'brms_results_unnorm_',feature_type,'_', random_seed, '_probdraws2.csv',sep='')
 }
-brmsGLM_testpred2(model=model, testdata=testdata, 
+brmsGLM_testpred2(model=model, test_data=testdata, 
                   matrixpath=test_matrixpath, csvpath=test_csvpath)
 
 # prediction function 3
@@ -194,7 +194,7 @@ if (normalize==TRUE){
   test_matrixpath <- paste(resultfolder,'brms_bayesGLM_pred_unnorm_',feature_type,'_',random_seed,'_probdraws3.rds',sep='')
   test_csvpath <- paste(resultfolder,'brms_results_unnorm_',feature_type,'_', random_seed, '_probdraws3.csv',sep='')
 }
-brmsGLM_testpred3(model=model, testdata=testdata, 
+brmsGLM_testpred3(model=model, test_data=testdata, 
                   matrixpath=test_matrixpath, csvpath=test_csvpath)
 
 
@@ -217,7 +217,7 @@ if (normalize==TRUE){
   pres_test_matrixpath <- paste(resultfolder,'brms_presbayesGLM_pred_unnorm_',feature_type,'_',random_seed,'_probdraws1.rds',sep='')
   pres_test_csvpath <- paste(resultfolder,'brms_results_pres_unnorm_',feature_type,'_', random_seed, '_probdraws1.csv',sep='')
 }
-brmsGLM_testpred1(model=model, testdata=pres_testdata, 
+brmsGLM_testpred1(model=model, test_data=pres_testdata, 
                   matrixpath=pres_test_matrixpath, csvpath=pres_test_csvpath)
 
 # prediction function 2
@@ -228,7 +228,7 @@ if (normalize==TRUE){
   pres_test_matrixpath <- paste(resultfolder,'brms_presbayesGLM_pred_unnorm_',feature_type,'_',random_seed,'_probdraws2.rds',sep='')
   pres_test_csvpath <- paste(resultfolder,'brms_results_pres_unnorm_',feature_type,'_', random_seed, '_probdraws2.csv',sep='')
 }
-brmsGLM_testpred2(model=model, testdata=pres_testdata, 
+brmsGLM_testpred2(model=model, test_data=pres_testdata, 
                   matrixpath=pres_test_matrixpath, csvpath=pres_test_csvpath)
 
 # prediction function 3
@@ -239,7 +239,7 @@ if (normalize==TRUE){
   pres_test_matrixpath <- paste(resultfolder,'brms_presbayesGLM_pred_unnorm_',feature_type,'_',random_seed,'_probdraws3.rds',sep='')
   pres_test_csvpath <- paste(resultfolder,'brms_results_pres_unnorm_',feature_type,'_', random_seed, '_probdraws3.csv',sep='')
 }
-brmsGLM_testpred3(model=model, testdata=pres_testdata, 
+brmsGLM_testpred3(model=model, test_data=pres_testdata, 
                   matrixpath=pres_test_matrixpath, csvpath=pres_test_csvpath)
 
 

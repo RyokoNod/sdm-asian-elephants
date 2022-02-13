@@ -1,3 +1,6 @@
+
+# Functions not in use ----------------------------------------------------
+
 trainvalsplit <- function(master_data, train_prop, random_seed=123456){
   # <Overview>
   # Given a dataset, this function separates the data into training
@@ -44,7 +47,7 @@ trainvalsplit <- function(master_data, train_prop, random_seed=123456){
   return(trainval)
 }
 
-bayesGLM_testpred <- function(model, testdata, N, matrixpath, csvpath, replace=FALSE, bernoulli_draws= FALSE, seed=123456){
+bayesGLM_testpred <- function(model, testdata, N, matrixpath, csvpath, bernoulli_draws= FALSE, seed=123456){
   # <Overview>
   # Creates and saves Bayesian logistic regression predictions for 
   # the given model and input features
@@ -55,7 +58,6 @@ bayesGLM_testpred <- function(model, testdata, N, matrixpath, csvpath, replace=F
   # N: Number of samples per distribution
   # matrixpath: Where you want your distribution matrix saved (file name)
   # csvpath: Where you want your point predictions and interval info saved (file name)
-  # replace: Whether to sample with replacement
   # bernoulli_draws: Setting this to TRUE will makee the draws either 0 or 1
   # seed: Random seed for sampling
   # <Returns>
@@ -66,21 +68,30 @@ bayesGLM_testpred <- function(model, testdata, N, matrixpath, csvpath, replace=F
   set.seed(seed)
   draws <- extract(model) # get the sample draws from model
   test_features <- subset(testdata, select=-c(HID)) # get the features from the model
+  nhex <- dim(test_features)[1] # number of hexagons in test data
+  
+  # sample of random row indices
+  row_sample_ind <- sample(seq_len(nrow(draws$intercept)), size = N)
   
   # get the posterior distributions from the fitted model
   intercept_post <- draws$intercept
   coeffs_post <- draws$coeffs
   
-  nhex <- dim(test_features)[1] # number of hexagons in test data
-  nfeatures <-dim(test_features)[2] # number of features in test data
   
-  intercept_samples <- sample(intercept_post, size = N, replace=replace) # get samples for intercept
+  #nfeatures <-dim(test_features)[2] # number of features in test data
+  
+  
+  
+  #intercept_samples <- sample(intercept_post, size = N, replace=replace) # get samples for intercept
   
   # get samples for coefficients
-  coeff_samples <- matrix(0, N, nfeatures)
-  for (i in seq(1:nfeatures)){
-    coeff_samples[,i] <- sample(coeffs_post[,i], size = N, replace=replace)
-  }
+  #coeff_samples <- matrix(0, N, nfeatures)
+  #for (i in seq(1:nfeatures)){
+  #  coeff_samples[,i] <- sample(coeffs_post[,i], size = N, replace=replace)
+  #}
+  
+  intercept_samples <- draws$intercept[row_sample_ind]
+  coeff_samples <- draws$coeffs[row_sample_ind,]
   
   # get the prediction draws
   preds_matrix <- matrix(0, N, nhex)
@@ -206,6 +217,9 @@ bayes_lr_calibration <- function(unnorm_model, norm_model, traindata, validdata,
   ggplot(calPlotData)
   
 }
+
+
+# Functions in use --------------------------------------------------------
 
 TSS <- function(predlbls, truelbls, pos="1", neg="0"){
   # <Overview>
