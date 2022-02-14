@@ -87,8 +87,11 @@ for (f in 1:nfolds){
   
   # looks like brms posterior predictive draws don't let us set random seeds
   # which means the predictions will be slightly different every time
-  trainpred <- predict(blinGLM)[,1]
-  valpred <- predict(blinGLM, newdata=cbind(valdata$features, valdata$labels))[,1]
+  trainpred_matrix <- brms::posterior_linpred(blinGLM, transform=TRUE, ndraws=500)
+  valpred_matrix <- brms::posterior_linpred(blinGLM, transform=TRUE, ndraws = 500, 
+                                            newdata=cbind(valdata$features, valdata$labels))
+  trainpred <- apply(trainpred_matrix, 2, median)
+  valpred <- apply(valpred_matrix, 2, median)
   valpreds_all <- rbind(valpreds_all, cbind(HID=valdata$HID$HID, valpred=valpred))
   
   # calculate AUC for the fold and store
@@ -141,6 +144,7 @@ if (normalize==TRUE){
   preProc <- preProcess(train_features, method=c("range"))
   train_features <- predict(preProc, train_features)
   pres_testfeatures <- predict(preProc, pres_testfeatures)
+  pres_testdata <- cbind(HID=pres_testdata$HID, pres_testfeatures) # put HID together again
 }
 
 # create model
@@ -186,21 +190,19 @@ if (normalize==TRUE){
   }
 }
 
-# get predictions for present-day climate
-pres_testpred <- predict(blinGLM, newdata=pres_testfeatures)
-pres_testoutputs <- cbind(HID=pres_testdata$HID,mean_pred=pres_testpred[,1], sd=pres_testpred[,2])
-
-# save predictions to file
+# predict and save to files
 if (normalize==TRUE){
+  pres_preds_matrix <-  paste(resultfolder,'pres_preds_bayeslinGLM_',feature_type,'norm_seed', random_seed, 
+                            '.rds',sep='')
   pres_preds_file <-  paste(resultfolder,'pres_preds_bayeslinGLM_',feature_type,'norm_seed', random_seed, 
                           '.csv',sep='')
 }else{
+  pres_preds_matrix <-  paste(resultfolder,'pres_preds_bayeslinGLM_',feature_type,'unnorm_seed', random_seed, 
+                            '.rds',sep='')
   pres_preds_file <-  paste(resultfolder,'pres_preds_bayeslinGLM_',feature_type,'unnorm_seed', random_seed, 
                           '.csv',sep='')
 }
-write.csv(pres_testoutputs, pres_preds_file, row.names=FALSE)
-
-
+brmsGLM_testpred(blinGLM, pres_testdata, matrixpath=pres_preds_matrix, csvpath=pres_preds_file)
 
 
 # Future predictions ------------------------------------------------------
@@ -217,6 +219,7 @@ if (normalize==TRUE){
   preProc <- preProcess(train_features, method=c("range"))
   train_features <- predict(preProc, train_features)
   testfeatures <- predict(preProc, testfeatures)
+  testdata <- cbind(HID=testdata$HID, testfeatures) # put HID together again
 }
 
 
@@ -237,19 +240,20 @@ if (normalize==TRUE){
   }
 }
 
-# get the predictions for future climate
-testpred <- predict(blinGLM, newdata=testfeatures)
-testoutputs <- cbind(HID=testdata$HID,mean_pred=testpred[,1], sd=testpred[,2])
-
-# save predictions to file
+# predict and save to files
 if (normalize==TRUE){
+  preds_matrix <-  paste(resultfolder,'preds_bayeslinGLM_',feature_type,'norm_seed', random_seed, 
+                       '.rds',sep='')
   preds_file <-  paste(resultfolder,'preds_bayeslinGLM_',feature_type,'norm_seed', random_seed, 
                             '.csv',sep='')
 }else{
+  preds_matrix <-  paste(resultfolder,'preds_bayeslinGLM_',feature_type,'unnorm_seed', random_seed, 
+                       '.rds',sep='')
   preds_file <-  paste(resultfolder,'preds_bayeslinGLM_',feature_type,'unnorm_seed', random_seed, 
                             '.csv',sep='')
 }
-write.csv(testoutputs, preds_file, row.names=FALSE)
+brmsGLM_testpred(blinGLM, testdata, matrixpath=preds_matrix, csvpath=preds_file)
+
 
 
 
@@ -305,6 +309,7 @@ reliabilitydiag::autoplot(newcalPlot)+
 
 
 
+# (Troubleshooting) Create Stan code --------------------------------------
 
 # separate the labels and features from the master training data
 train_features <- subset(traindata_master, select=-c(HID, Folds, PA))

@@ -25,7 +25,7 @@ brmsGLM_testpred1 <- function(model, test_data, matrixpath, csvpath, N=100){
   cihigh_probs <- as.data.frame(apply(preds_matrix, 2, quantile, probs=c(0.975)))
   ci_size <-cihigh_probs - cilow_probs
   sd_probs <- as.data.frame(apply(preds_matrix, 2, sd))
-  output_probs <- cbind(subset(testdata,select=HID), median_probs, mean_probs, 
+  output_probs <- cbind(subset(test_data,select=HID), median_probs, mean_probs, 
                         cilow_probs, cihigh_probs, ci_size, sd_probs)
   colnames(output_probs) <- c("HID", "median_probs","mean_probs", "cilow", 
                               "cihigh", "cisize", "standarddev")
@@ -68,7 +68,7 @@ brmsGLM_testpred2 <- function(model, test_data, matrixpath, csvpath, N=100){
   cihigh_probs <- as.data.frame(apply(preds_matrix, 2, quantile, probs=c(0.975)))
   ci_size <-cihigh_probs - cilow_probs
   sd_probs <- as.data.frame(apply(preds_matrix, 2, sd))
-  output_probs <- cbind(subset(testdata,select=HID), median_probs, mean_probs, 
+  output_probs <- cbind(subset(test_data,select=HID), median_probs, mean_probs, 
                         cilow_probs, cihigh_probs, ci_size, sd_probs)
   colnames(output_probs) <- c("HID", "median_probs","mean_probs", "cilow", 
                               "cihigh", "cisize", "standarddev")
@@ -103,7 +103,7 @@ brmsGLM_testpred3 <- function(model, test_data, matrixpath, csvpath, N=100){
   cihigh_probs <- as.data.frame(apply(preds_matrix, 2, quantile, probs=c(0.975)))
   ci_size <-cihigh_probs - cilow_probs
   sd_probs <- as.data.frame(apply(preds_matrix, 2, sd))
-  output_probs <- cbind(subset(testdata,select=HID), median_probs, mean_probs, 
+  output_probs <- cbind(subset(test?data,select=HID), median_probs, mean_probs, 
                         cilow_probs, cihigh_probs, ci_size, sd_probs)
   colnames(output_probs) <- c("HID", "median_probs","mean_probs", "cilow", 
                               "cihigh", "cisize", "standarddev")
