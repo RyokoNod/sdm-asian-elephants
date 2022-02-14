@@ -50,7 +50,7 @@ trainvalsplit <- function(master_data, train_prop, random_seed=123456){
 bayesGLM_testpred <- function(model, testdata, N, matrixpath, csvpath, bernoulli_draws= FALSE, seed=123456){
   # <Overview>
   # Creates and saves Bayesian logistic regression predictions for 
-  # the given model and input features
+  # the given Stan model and input features
   # (distribution, point prediction, interval information)
   # <Parameters>
   # model: The Stan model after inference
@@ -77,19 +77,7 @@ bayesGLM_testpred <- function(model, testdata, N, matrixpath, csvpath, bernoulli
   intercept_post <- draws$intercept
   coeffs_post <- draws$coeffs
   
-  
-  #nfeatures <-dim(test_features)[2] # number of features in test data
-  
-  
-  
-  #intercept_samples <- sample(intercept_post, size = N, replace=replace) # get samples for intercept
-  
-  # get samples for coefficients
-  #coeff_samples <- matrix(0, N, nfeatures)
-  #for (i in seq(1:nfeatures)){
-  #  coeff_samples[,i] <- sample(coeffs_post[,i], size = N, replace=replace)
-  #}
-  
+  # get the random draws of intercept and coefficient
   intercept_samples <- draws$intercept[row_sample_ind]
   coeff_samples <- draws$coeffs[row_sample_ind,]
   
@@ -225,7 +213,12 @@ TSS <- function(predlbls, truelbls, pos="1", neg="0"){
   # <Overview>
   # Calculates the True Skill Statistic (sensitivity + specificity - 1)
   # <Parameters>
-  # predlbls: The predicted binarylabels for the dataset (labels, not probabilities)
+  # predlbls: The predicted binary labels for the dataset (labels, not probabilities)
+  # truelbls: The real labels, 0 or 1
+  # pos: What label counts as positive in the dataset
+  # neg: What label counts as negative in the dataset
+  # <Returns>
+  # The True Skill Statistic value, sensitivity + specificity - 1
   sens <- sensitivity(as.factor(predlbls), as.factor(truelbls), positive=pos)
   spec <- specificity(as.factor(predlbls), as.factor(truelbls), negative=neg)
   
@@ -233,6 +226,16 @@ TSS <- function(predlbls, truelbls, pos="1", neg="0"){
 }
 
 maxTSS_scores <- function(preds, truelbls, pos="1", neg="0"){
+  # <Overview>
+  # Returns the maximum possible True Skill Statistic and corresponding
+  # sensitivity and specificity values
+  # <Parameters>
+  # preds: The predicted probabilities for the dataset
+  # truelbls: The real labels, 0 or 1
+  # pos: What label counts as positive in the dataset
+  # neg: What label counts as negative in the dataset
+  # <Returns>
+  # The True Skill Statistic value, sensitivity + specificity - 1
   thres_candidates <- seq(0.01, 0.99, .01)
   tss_scores <- sapply(thres_candidates, 
                       function(thres) TSS(ifelse(preds >= thres, 1, 0), 
@@ -252,7 +255,39 @@ maxTSS_scores <- function(preds, truelbls, pos="1", neg="0"){
 }
 
 
-
+brmsGLM_testpred <- function(model, test_data, matrixpath, csvpath, N=100){
+  # <Overview>
+  # Creates and saves Bayesian logistic regression predictions for 
+  # the given BRMS model and input features
+  # (distribution, point prediction, interval information)
+  # <Parameters>
+  # model: The BRMS model after inference
+  # testdata: The feature file for hexagonal grid (including HID)
+  # N: Number of samples per distribution
+  # matrixpath: Where you want your distribution matrix saved (file name)
+  # csvpath: Where you want your point predictions and interval info saved (file name)
+  # <Returns>
+  # Does not return anything, but saves two output files.
+  # The file specified with matrixpath: The distribution matrix as rds
+  # The file specified with csvpath: The point predictions and intervals as csv
+  
+  preds_matrix <- posterior_linpred(model, transform=TRUE, ndraws=N,
+                                    newdata=subset(test_data,select=-c(HID)))
+  saveRDS(preds_matrix, matrixpath) #save the prediction draws
+  
+  # prepare the output data: median, mean, CI (95%), IQR, standard deviation
+  median_probs <- as.data.frame(apply(preds_matrix, 2, median))
+  mean_probs <- as.data.frame(apply(preds_matrix, 2, mean))
+  cilow_probs <- as.data.frame(apply(preds_matrix, 2, quantile, probs=c(0.025)))
+  cihigh_probs <- as.data.frame(apply(preds_matrix, 2, quantile, probs=c(0.975)))
+  iqr_probs <- as.data.frame(apply(preds_matrix, 2, IQR))
+  sd_probs <- as.data.frame(apply(preds_matrix, 2, sd))
+  output_probs <- cbind(subset(test_data,select=HID), median_probs, mean_probs, 
+                        cilow_probs, cihigh_probs, iqr_probs, sd_probs)
+  colnames(output_probs) <- c("HID", "median_probs","mean_probs", "cilow", 
+                              "cihigh", "IQR", "standarddev")
+  write.csv(output_probs, csvpath, row.names=FALSE) # write outputs to CSV
+}
 
 
 
