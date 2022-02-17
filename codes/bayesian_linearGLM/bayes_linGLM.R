@@ -11,9 +11,9 @@ options(mc.cores=parallel::detectCores())  # use all available cores
 # settings
 random_seed = 12244 # set random seed
 datafolder <- '../../data/Modeling_Data/'
-resultfolder <- '../../data/Results/Bayesian_GLM/'
-feature_type <- 'GLM' # GLM for random CV feature set, SGLM for spatial CV feature set
-normalize <-TRUE # TRUE if you want to normalize the data
+resultfolder <- '../../data/Results/Bayesian_linearGLM/'
+feature_type <- 'SGLM' # GLM for random CV feature set, SGLM for spatial CV feature set
+normalize <- TRUE # TRUE if you want to normalize the data
 adapt_d <- 0.99
 treedepth <- 10
 
@@ -25,21 +25,39 @@ pres_testfile <- paste(datafolder,'testdata_pres_',feature_type,'.csv',sep='') #
 # import the present-day climate variables with Asian elephant presence
 traindata_master <- read.csv(trainfile, header=TRUE)
 
-# define formula and priors
-formula <- as.factor(PA) ~ 0 + Intercept + BIO03_Mean + TN10P_IDW1N10 +
-  GSL_IDW1N10 + TNX_IDW1N10 + ID_IDW1N10 + BIO14_Mean + BIO18_Mean +
-  CWD_IDW1N10 + RX1DAY_IDW1N10 + WSDI_IDW1N10
-priors <- c(set_prior("normal(0,5)", class="b", coef="BIO03_Mean"),
-            set_prior("normal(0,5)", class="b", coef="TN10P_IDW1N10"),
-            set_prior("normal(0,5)", class="b", coef="GSL_IDW1N10"),
-            set_prior("normal(0,5)", class="b", coef="TNX_IDW1N10"),
-            set_prior("normal(0,5)", class="b", coef="ID_IDW1N10"),
-            set_prior("normal(0,5)", class="b", coef="BIO14_Mean"),
-            set_prior("normal(0,5)", class="b", coef="BIO18_Mean"),
-            set_prior("normal(0,5)", class="b", coef="CWD_IDW1N10"),
-            set_prior("normal(0,5)", class="b", coef="RX1DAY_IDW1N10"),
-            set_prior("normal(0,5)", class="b", coef="WSDI_IDW1N10"),
-            set_prior("normal(0,10)", class="b", coef="Intercept"))
+
+# Define formula and priors -----------------------------------------------
+if (feature_type=="GLM"){
+  formula <- as.factor(PA) ~ 0 + Intercept + BIO03_Mean + TN10P_IDW1N10 +
+    GSL_IDW1N10 + TNX_IDW1N10 + ID_IDW1N10 + BIO14_Mean + BIO18_Mean +
+    CWD_IDW1N10 + RX1DAY_IDW1N10 + WSDI_IDW1N10
+  priors <- c(set_prior("normal(0,5)", class="b", coef="BIO03_Mean"),
+              set_prior("normal(0,5)", class="b", coef="TN10P_IDW1N10"),
+              set_prior("normal(0,5)", class="b", coef="GSL_IDW1N10"),
+              set_prior("normal(0,5)", class="b", coef="TNX_IDW1N10"),
+              set_prior("normal(0,5)", class="b", coef="ID_IDW1N10"),
+              set_prior("normal(0,5)", class="b", coef="BIO14_Mean"),
+              set_prior("normal(0,5)", class="b", coef="BIO18_Mean"),
+              set_prior("normal(0,5)", class="b", coef="CWD_IDW1N10"),
+              set_prior("normal(0,5)", class="b", coef="RX1DAY_IDW1N10"),
+              set_prior("normal(0,5)", class="b", coef="WSDI_IDW1N10"),
+              set_prior("normal(0,10)", class="b", coef="Intercept"))
+}else{
+  formula <- as.factor(PA) ~ 0 + Intercept + BIO08_Mean + TXX_IDW1N10 +
+    BIO02_Mean + TN90P_IDW1N10 + ID_IDW1N10 + BIO14_Mean + BIO18_Mean +
+    CWD_IDW1N10 + RX1DAY_IDW1N10 + WSDI_IDW1N10
+  priors <- c(set_prior("normal(0,5)", class="b", coef="BIO08_Mean"),
+              set_prior("normal(0,5)", class="b", coef="TXX_IDW1N10"),
+              set_prior("normal(0,5)", class="b", coef="BIO02_Mean"),
+              set_prior("normal(0,5)", class="b", coef="TN90P_IDW1N10"),
+              set_prior("normal(0,5)", class="b", coef="ID_IDW1N10"),
+              set_prior("normal(0,5)", class="b", coef="BIO14_Mean"),
+              set_prior("normal(0,5)", class="b", coef="BIO18_Mean"),
+              set_prior("normal(0,5)", class="b", coef="CWD_IDW1N10"),
+              set_prior("normal(0,5)", class="b", coef="RX1DAY_IDW1N10"),
+              set_prior("normal(0,5)", class="b", coef="WSDI_IDW1N10"),
+              set_prior("normal(0,10)", class="b", coef="Intercept"))
+}
 
 
 
