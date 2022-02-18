@@ -255,7 +255,7 @@ maxTSS_scores <- function(preds, truelbls, pos="1", neg="0"){
 }
 
 
-brmsGLM_testpred <- function(model, test_data, matrixpath, csvpath, N=100){
+brmsGLM_testpred <- function(model, test_data, matrixpath, csvpath, N=500){
   # <Overview>
   # Creates and saves Bayesian logistic regression predictions for 
   # the given BRMS model and input features

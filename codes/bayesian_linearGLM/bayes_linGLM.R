@@ -277,7 +277,7 @@ brmsGLM_testpred(blinGLM, testdata, matrixpath=preds_matrix, csvpath=preds_file)
 
 # Model statistics --------------------------------------------------------
 
-# load if R crashes
+# load model id needed
 if (normalize==TRUE){
   if (feature_type=="GLM"){
     blinGLM <- readRDS("bayeslinGLM_norm_randCVfeat_model.rds") 
