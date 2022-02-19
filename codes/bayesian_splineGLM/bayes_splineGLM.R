@@ -11,11 +11,12 @@ options(mc.cores=parallel::detectCores())  # use all available cores
 # settings
 random_seed = 12244 # set random seed
 datafolder <- '../../data/Modeling_Data/'
-resultfolder <- '../../data/Results/Bayesian_GLM/'
+resultfolder <- '../../data/Results/Bayesian_splineGLM/'
+CVmodelfolder <- './CV_intermediate_models/'
 feature_type <- 'GLM' # GLM for random CV feature set, SGLM for spatial CV feature set
-normalize <- TRUE # TRUE if you want to normalize the data
+normalize <- FALSE # TRUE if you want to normalize the data
 adapt_d <- 0.99
-treedepth <- 10
+treedepth <- 12
 
 # specify file names for data
 trainfile <- paste(datafolder,'traindata_',feature_type,'.csv',sep='')
@@ -25,21 +26,40 @@ pres_testfile <- paste(datafolder,'testdata_pres_',feature_type,'.csv',sep='') #
 # import the present-day climate variables with Asian elephant presence
 traindata_master <- read.csv(trainfile, header=TRUE)
 
-# define formula and priors
-formula <- as.factor(PA) ~ 0 + Intercept + s(BIO03_Mean) + s(TN10P_IDW1N10) +
-  s(GSL_IDW1N10) + s(TNX_IDW1N10) + s(ID_IDW1N10) + s(BIO14_Mean) + s(BIO18_Mean) +
-  s(CWD_IDW1N10) + s(RX1DAY_IDW1N10) + s(WSDI_IDW1N10)
-priors <- c(set_prior("normal(0,5)", class="b", coef="sBIO03_Mean_1"),
-            set_prior("normal(0,5)", class="b", coef="sTN10P_IDW1N10_1"),
-            set_prior("normal(0,5)", class="b", coef="sGSL_IDW1N10_1"),
-            set_prior("normal(0,5)", class="b", coef="sTNX_IDW1N10_1"),
-            set_prior("normal(0,5)", class="b", coef="sID_IDW1N10_1"),
-            set_prior("normal(0,5)", class="b", coef="sBIO14_Mean_1"),
-            set_prior("normal(0,5)", class="b", coef="sBIO18_Mean_1"),
-            set_prior("normal(0,5)", class="b", coef="sCWD_IDW1N10_1"),
-            set_prior("normal(0,5)", class="b", coef="sRX1DAY_IDW1N10_1"),
-            set_prior("normal(0,5)", class="b", coef="sWSDI_IDW1N10_1"),
-            set_prior("normal(0,10)", class="b", coef="Intercept"))
+
+# Define formula and priors -----------------------------------------------
+
+if (feature_type=="GLM"){
+  formula <- as.factor(PA) ~ 0 + Intercept + s(BIO03_Mean) + s(TN10P_IDW1N10) +
+    s(GSL_IDW1N10) + s(TNX_IDW1N10) + s(ID_IDW1N10) + s(BIO14_Mean) + s(BIO18_Mean) +
+    s(CWD_IDW1N10) + s(RX1DAY_IDW1N10) + s(WSDI_IDW1N10)
+  priors <- c(set_prior("normal(0,5)", class="b", coef="sBIO03_Mean_1"),
+              set_prior("normal(0,5)", class="b", coef="sTN10P_IDW1N10_1"),
+              set_prior("normal(0,5)", class="b", coef="sGSL_IDW1N10_1"),
+              set_prior("normal(0,5)", class="b", coef="sTNX_IDW1N10_1"),
+              set_prior("normal(0,5)", class="b", coef="sID_IDW1N10_1"),
+              set_prior("normal(0,5)", class="b", coef="sBIO14_Mean_1"),
+              set_prior("normal(0,5)", class="b", coef="sBIO18_Mean_1"),
+              set_prior("normal(0,5)", class="b", coef="sCWD_IDW1N10_1"),
+              set_prior("normal(0,5)", class="b", coef="sRX1DAY_IDW1N10_1"),
+              set_prior("normal(0,5)", class="b", coef="sWSDI_IDW1N10_1"),
+              set_prior("normal(0,10)", class="b", coef="Intercept"))
+}else{
+  formula <- as.factor(PA) ~ 0 + Intercept + s(BIO08_Mean) + s(TXX_IDW1N10) +
+    s(BIO02_Mean) + s(TN90P_IDW1N10) + s(ID_IDW1N10) + s(BIO14_Mean) + 
+    s(BIO18_Mean) + s(CWD_IDW1N10) + s(RX1DAY_IDW1N10) + s(WSDI_IDW1N10)
+  priors <- c(set_prior("normal(0,5)", class="b", coef="sBIO08_Mean_1"),
+              set_prior("normal(0,5)", class="b", coef="sTXX_IDW1N10_1"),
+              set_prior("normal(0,5)", class="b", coef="sBIO02_Mean_1"),
+              set_prior("normal(0,5)", class="b", coef="sTN90P_IDW1N10_1"),
+              set_prior("normal(0,5)", class="b", coef="sID_IDW1N10_1"),
+              set_prior("normal(0,5)", class="b", coef="sBIO14_Mean_1"),
+              set_prior("normal(0,5)", class="b", coef="sBIO18_Mean_1"),
+              set_prior("normal(0,5)", class="b", coef="sCWD_IDW1N10_1"),
+              set_prior("normal(0,5)", class="b", coef="sRX1DAY_IDW1N10_1"),
+              set_prior("normal(0,5)", class="b", coef="sWSDI_IDW1N10_1"),
+              set_prior("normal(0,10)", class="b", coef="Intercept"))
+}
 
 
 
@@ -47,6 +67,11 @@ priors <- c(set_prior("normal(0,5)", class="b", coef="sBIO03_Mean_1"),
 
 nfolds <- length(unique(traindata_master$Folds))
 eval_metrics <- c("AUC", "TSS", "sensitivity", "specificity") # evaluation metric list
+if (normalize==TRUE){
+  CVmodelfolder <-  paste(CVmodelfolder,'normalized_features/',feature_type,'/',sep='')
+}else{
+  CVmodelfolder <-  paste(CVmodelfolder,'unnormalized_features/',feature_type,'/',sep='')
+}
 
 # create matrices to store evaluations for each fold
 train_evals <- matrix(nrow=nfolds, ncol=length(eval_metrics))
@@ -58,6 +83,8 @@ valpreds_all <- data.frame() # an empty data frame to store validation predictio
 
 
 for (f in 1:nfolds){
+  CV_modelname <- paste(CVmodelfolder, 'model', f, '.rds', sep='') # intermediate model name
+  
   # separate training data and validation data for the fold
   fold_train <- subset(traindata_master, Folds!=f)
   fold_val <- subset(traindata_master, Folds==f)
@@ -67,8 +94,8 @@ for (f in 1:nfolds){
                     "labels"=subset(fold_train, select=c(PA)),
                     "HID"= subset(fold_train, select=c(HID)))
   valdata <- list("features"=subset(fold_val, select=-c(HID, PA, Folds)),
-                    "labels"=subset(fold_val, select=c(PA)),
-                    "HID"= subset(fold_val, select=c(HID)))
+                  "labels"=subset(fold_val, select=c(PA)),
+                  "HID"= subset(fold_val, select=c(HID)))
   
   # if specified, normalize the data
   if (normalize==TRUE){
@@ -77,18 +104,28 @@ for (f in 1:nfolds){
     valdata$features <- predict(preProc,  valdata$features)
   }
   
-  blinGLM <- brm(formula=formula, 
-                 data=cbind(traindata$features, traindata$labels),
-                 family=bernoulli(link="logit"),
-                 prior=priors,
-                 control = list(adapt_delta = adapt_d, max_treedepth = treedepth),
-                 seed=random_seed
-                 )
+  # since spline GLM takes so much time to train, save intermediate files
+  # so I can resume from where I left off if RStudio crashes
+  if (file.exists(CV_modelname)==FALSE){
+    bsplineGLM <- brm(formula=formula, 
+                   data=cbind(traindata$features, traindata$labels),
+                   family=bernoulli(link="logit"),
+                   prior=priors,
+                   control = list(adapt_delta = adapt_d, max_treedepth = treedepth),
+                   seed=random_seed
+    )
+    saveRDS(bsplineGLM, CV_modelname)
+  }else{
+    bsplineGLM <- readRDS(CV_modelname)
+  }
   
   # looks like brms posterior predictive draws don't let us set random seeds
   # which means the predictions will be slightly different every time
-  trainpred <- predict(blinGLM)[,1]
-  valpred <- predict(blinGLM, newdata=cbind(valdata$features, valdata$labels))[,1]
+  trainpred_matrix <- brms::posterior_linpred(bsplineGLM, transform=TRUE, ndraws=500)
+  valpred_matrix <- brms::posterior_linpred(bsplineGLM, transform=TRUE, ndraws = 500, 
+                                            newdata=cbind(valdata$features, valdata$labels))
+  trainpred <- apply(trainpred_matrix, 2, median)
+  valpred <- apply(valpred_matrix, 2, median)
   valpreds_all <- rbind(valpreds_all, cbind(HID=valdata$HID$HID, valpred=valpred))
   
   # calculate AUC for the fold and store
@@ -111,10 +148,10 @@ for (f in 1:nfolds){
 valpreds_all <- merge(subset(traindata_master, select=c(HID, PA)), valpreds_all, by="HID")
 
 if (normalize==TRUE){
-  valpreds_file <-  paste(resultfolder,'valpreds_bayeslinGLM_',feature_type,'norm_seed', random_seed, 
+  valpreds_file <-  paste(resultfolder,'valpreds_bayessplineGLM_',feature_type,'norm_seed', random_seed, 
                           '.csv',sep='')
 }else{
-  valpreds_file <-  paste(resultfolder,'valpreds_bayeslinGLM_',feature_type,'unnorm_seed', random_seed, 
+  valpreds_file <-  paste(resultfolder,'valpreds_bayessplineGLM_',feature_type,'unnorm_seed', random_seed, 
                           '.csv',sep='')
 }
 write.csv(valpreds_all, valpreds_file, row.names=FALSE)
@@ -141,10 +178,11 @@ if (normalize==TRUE){
   preProc <- preProcess(train_features, method=c("range"))
   train_features <- predict(preProc, train_features)
   pres_testfeatures <- predict(preProc, pres_testfeatures)
+  pres_testdata <- cbind(HID=pres_testdata$HID, pres_testfeatures) # put HID together again
 }
 
 # create model
-blinGLM <- brm(formula=formula, 
+bsplineGLM <- brm(formula=formula, 
                data=cbind(train_features, train_labels),
                family=bernoulli(link="logit"),
                prior=priors,
@@ -155,50 +193,50 @@ blinGLM <- brm(formula=formula,
 # save model so I can recover if R crashes
 if (normalize==TRUE){
   if (feature_type=="GLM"){
-    saveRDS(blinGLM, "bayeslinGLM_norm_randCVfeat_model.rds") 
+    saveRDS(bsplineGLM, "bayessplineGLM_norm_randCVfeat_model.rds") 
   }
   if (feature_type=="SGLM"){
-    saveRDS(blinGLM, "bayeslinGLM_norm_spatialCVfeat_model.rds")
+    saveRDS(bsplineGLM, "bayessplineGLM_norm_spatialCVfeat_model.rds")
   }
 } else{
   if (feature_type=="GLM"){
-    saveRDS(blinGLM, "bayeslinGLM_randCVfeat_model.rds") 
+    saveRDS(bsplineGLM, "bayessplineGLM_randCVfeat_model.rds") 
   }
   if (feature_type=="SGLM"){
-    saveRDS(blinGLM, "bayeslinGLM_spatialCVfeat_model.rds")
+    saveRDS(bsplineGLM, "bayessplineGLM_spatialCVfeat_model.rds")
   }
 }
 
 # load if R crashes
 if (normalize==TRUE){
   if (feature_type=="GLM"){
-    blinGLM <- readRDS("bayeslinGLM_norm_randCVfeat_model.rds") 
+    bsplineGLM <- readRDS("bayessplineGLM_norm_randCVfeat_model.rds") 
   }
   if (feature_type=="SGLM"){
-    blinGLM <- readRDS("bayeslinGLM_norm_spatialCVfeat_model.rds") 
+    bsplineGLM <- readRDS("bayessplineGLM_norm_spatialCVfeat_model.rds") 
   }
 } else {
   if (feature_type=="GLM"){
-    blinGLM <- readRDS("bayeslinGLM_randCVfeat_model.rds") 
+    bsplineGLM <- readRDS("bayessplineGLM_randCVfeat_model.rds") 
   }
   if (feature_type=="SGLM"){
-    blinGLM <- readRDS("bayeslinGLM_spatialCVfeat_model.rds") 
+    bsplineGLM <- readRDS("bayessplineGLM_spatialCVfeat_model.rds") 
   }
 }
 
-# get predictions for present-day climate
-pres_testpred <- predict(blinGLM, newdata=pres_testfeatures)
-pres_testoutputs <- cbind(HID=pres_testdata$HID,mean_pred=pres_testpred[,1], sd=pres_testpred[,2])
-
-# save predictions to file
+# predict and save to files
 if (normalize==TRUE){
-  pres_preds_file <-  paste(resultfolder,'pres_preds_bayeslinGLM_',feature_type,'norm_seed', random_seed, 
-                          '.csv',sep='')
+  pres_preds_matrix <-  paste(resultfolder,'pres_preds_bayessplineGLM_',feature_type,'norm_seed', random_seed, 
+                              '.rds',sep='')
+  pres_preds_file <-  paste(resultfolder,'pres_preds_bayessplineGLM_',feature_type,'norm_seed', random_seed, 
+                            '.csv',sep='')
 }else{
-  pres_preds_file <-  paste(resultfolder,'pres_preds_bayeslinGLM_',feature_type,'unnorm_seed', random_seed, 
-                          '.csv',sep='')
+  pres_preds_matrix <-  paste(resultfolder,'pres_preds_bayessplineGLM_',feature_type,'unnorm_seed', random_seed, 
+                              '.rds',sep='')
+  pres_preds_file <-  paste(resultfolder,'pres_preds_bayessplineGLM_',feature_type,'unnorm_seed', random_seed, 
+                            '.csv',sep='')
 }
-write.csv(pres_testoutputs, pres_preds_file, row.names=FALSE)
+brmsGLM_testpred(bsplineGLM, pres_testdata, matrixpath=pres_preds_matrix, csvpath=pres_preds_file)
 
 
 
@@ -217,39 +255,40 @@ if (normalize==TRUE){
   preProc <- preProcess(train_features, method=c("range"))
   train_features <- predict(preProc, train_features)
   testfeatures <- predict(preProc, testfeatures)
+  testdata <- cbind(HID=testdata$HID, testfeatures) # put HID together again
 }
 
 
 # load if R crashes
 if (normalize==TRUE){
   if (feature_type=="GLM"){
-    blinGLM <- readRDS("bayeslinGLM_norm_randCVfeat_model.rds") 
+    bsplineGLM <- readRDS("bayessplineGLM_norm_randCVfeat_model.rds") 
   }
   if (feature_type=="SGLM"){
-    blinGLM <- readRDS("bayeslinGLM_norm_spatialCVfeat_model.rds") 
+    bsplineGLM <- readRDS("bayessplineGLM_norm_spatialCVfeat_model.rds") 
   }
 } else {
   if (feature_type=="GLM"){
-    blinGLM <- readRDS("bayeslinGLM_randCVfeat_model.rds") 
+    bsplineGLM <- readRDS("bayessplineGLM_randCVfeat_model.rds") 
   }
   if (feature_type=="SGLM"){
-    blinGLM <- readRDS("bayeslinGLM_spatialCVfeat_model.rds") 
+    bsplineGLM <- readRDS("bayessplineGLM_spatialCVfeat_model.rds") 
   }
 }
 
-# get the predictions for future climate
-testpred <- predict(blinGLM, newdata=testfeatures)
-testoutputs <- cbind(HID=testdata$HID,mean_pred=testpred[,1], sd=testpred[,2])
-
-# save predictions to file
+# predict and save to files
 if (normalize==TRUE){
-  preds_file <-  paste(resultfolder,'preds_bayeslinGLM_',feature_type,'norm_seed', random_seed, 
-                            '.csv',sep='')
+  preds_matrix <-  paste(resultfolder,'preds_bayessplineGLM_',feature_type,'norm_seed', random_seed, 
+                         '.rds',sep='')
+  preds_file <-  paste(resultfolder,'preds_bayessplineGLM_',feature_type,'norm_seed', random_seed, 
+                       '.csv',sep='')
 }else{
-  preds_file <-  paste(resultfolder,'preds_bayeslinGLM_',feature_type,'unnorm_seed', random_seed, 
-                            '.csv',sep='')
+  preds_matrix <-  paste(resultfolder,'preds_bayessplineGLM_',feature_type,'unnorm_seed', random_seed, 
+                         '.rds',sep='')
+  preds_file <-  paste(resultfolder,'preds_bayessplineGLM_',feature_type,'unnorm_seed', random_seed, 
+                       '.csv',sep='')
 }
-write.csv(testoutputs, preds_file, row.names=FALSE)
+brmsGLM_testpred(bsplineGLM, testdata, matrixpath=preds_matrix, csvpath=preds_file)
 
 
 
@@ -258,22 +297,22 @@ write.csv(testoutputs, preds_file, row.names=FALSE)
 # load if R crashes
 if (normalize==TRUE){
   if (feature_type=="GLM"){
-    blinGLM <- readRDS("bayeslinGLM_norm_randCVfeat_model.rds") 
+    bsplineGLM <- readRDS("bayessplineGLM_norm_randCVfeat_model.rds") 
   }
   if (feature_type=="SGLM"){
-    blinGLM <- readRDS("bayeslinGLM_norm_spatialCVfeat_model.rds") 
+    bsplineGLM <- readRDS("bayessplineGLM_norm_spatialCVfeat_model.rds") 
   }
 } else {
   if (feature_type=="GLM"){
-    blinGLM <- readRDS("bayeslinGLM_randCVfeat_model.rds") 
+    bsplineGLM <- readRDS("bayessplineGLM_randCVfeat_model.rds") 
   }
   if (feature_type=="SGLM"){
-    blinGLM <- readRDS("bayeslinGLM_spatialCVfeat_model.rds") 
+    bsplineGLM <- readRDS("bayessplineGLM_spatialCVfeat_model.rds") 
   }
 }
 
 # see model statistics in shinystan
-my_sso <- launch_shinystan(blinGLM)
+my_sso <- launch_shinystan(bsplineGLM)
 
 
 
@@ -281,17 +320,17 @@ my_sso <- launch_shinystan(blinGLM)
 
 # load in case RStudio crashed
 if (normalize==TRUE){
-  valpreds_file <-  paste(resultfolder,'valpreds_bayeslinGLM_',feature_type,'norm_seed', random_seed, 
+  valpreds_file <-  paste(resultfolder,'valpreds_bayessplineGLM_',feature_type,'norm_seed', random_seed, 
                           '.csv',sep='')
 }else{
-  valpreds_file <-  paste(resultfolder,'valpreds_bayeslinGLM_',feature_type,'unnorm_seed', random_seed, 
+  valpreds_file <-  paste(resultfolder,'valpreds_bayessplineGLM_',feature_type,'unnorm_seed', random_seed, 
                           '.csv',sep='')
 }
 valpreds_all <- read.csv(valpreds_file)
 
 # traditional calibration plot with 10 bins
-calPlotData<-calibration(factor(valpreds_all$PA) ~ bayes_linGLM, 
-                         data = data.frame(bayes_linGLM=valpreds_all$valpred,
+calPlotData<-calibration(factor(valpreds_all$PA) ~ bayes_GLM, 
+                         data = data.frame(bayes_GLM=valpreds_all$valpred,
                                            y=factor(valpreds_all$PA)), 
                          cuts=10, class="1", auto.key = list(columns = 2))
 ggplot(calPlotData)
@@ -314,6 +353,6 @@ make_stancode(formula=formula,
     data=cbind(train_features, train_labels),
     family=bernoulli(link="logit"),
     prior=priors,
-    save_model="brms_bayeslinGLM.stan"
+    save_model="brms_bayesGLM.stan"
 )
 
