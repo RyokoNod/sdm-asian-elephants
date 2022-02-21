@@ -125,7 +125,8 @@ for (f in 1:nfolds){
                       family=bernoulli(link="logit"),
                       prior=priors,
                       control = list(adapt_delta = adapt_d, max_treedepth = treedepth),
-                      seed=random_seed
+                      seed=random_seed,
+                      iter=3000
     )
     saveRDS(bsplineGLM, CV_modelname)
   }else{

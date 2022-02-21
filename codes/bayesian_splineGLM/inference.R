@@ -89,7 +89,8 @@ bsplineGLM <- brm(formula=formula,
                   family=bernoulli(link="logit"),
                   prior=priors,
                   control = list(adapt_delta = adapt_d, max_treedepth = treedepth),
-                  seed=random_seed
+                  seed=random_seed,
+                  iter=3000
 )
 
 # save model
