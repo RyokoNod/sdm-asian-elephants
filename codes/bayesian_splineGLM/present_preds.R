@@ -2,7 +2,6 @@ library(caret)
 library(brms)
 library(MLmetrics)
 library(dplyr)
-library(shinystan)
 source("../utils.R")
 options(mc.cores=parallel::detectCores())  # use all available cores
 
@@ -15,16 +14,18 @@ args = commandArgs(trailingOnly = TRUE)
 # test if there is at least one argument: if not, return an error
 if (length(args)==0) {
   stop("At least one argument must be supplied (input file).n", call.=FALSE)
-} else if (length(args)==2) {
-  args[3] = 12244
+} else if (length(args)==3) {
+  args[4] = 12244
 }
 
 feature_type <- args[1] # GLM for random CV feature set, SGLM for spatial CV feature set
 normalize <- as.logical(args[2]) # TRUE if you want to specify model for normalized features
-random_seed = as.integer(args[3]) # random seed used in model name
+k <- as.integer(args[3]) # the k you used in the brms formula. It's weird but the predictions need this
+random_seed = as.integer(args[4]) # random seed used in model name
 
 print(paste("feature type: ", feature_type))
 print(paste("normalize: ", normalize))
+print(paste("k: ", k))
 print(paste("random seed: ", random_seed))
 
 # specify file names for data
