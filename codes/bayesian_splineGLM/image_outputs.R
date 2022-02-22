@@ -7,8 +7,8 @@ source("../utils.R")
 
 resultfolder <- '../../data/Results/Bayesian_splineGLM/'
 
-feature_type <- 'SGLM'
-normalize <- TRUE 
+feature_type <- 'GLM'
+normalize <- FALSE
 random_seed = 12244
 
 
