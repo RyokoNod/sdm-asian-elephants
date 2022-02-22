@@ -2,7 +2,6 @@ library(caret)
 library(brms)
 library(MLmetrics)
 library(dplyr)
-library(shinystan)
 source("../utils.R")
 options(mc.cores=parallel::detectCores())  # use all available cores
 
@@ -14,20 +13,23 @@ args = commandArgs(trailingOnly = TRUE)
 # test if there is at least one argument: if not, return an error
 if (length(args)==0) {
   stop("At least one argument must be supplied (input file).n", call.=FALSE)
-} else if (length(args)==4) {
-  args[5] = 12244
+} else if (length(args)==5) {
+  args[6] = 12244
 }
 
 feature_type <- args[1] # GLM for random CV feature set, SGLM for spatial CV feature set
 normalize <- as.logical(args[2]) # TRUE if you want to normalize the data
 adapt_d <- as.double(args[3]) # adapt_delta parameter for Stan. If no idea put 0.99
 treedepth <- as.integer(args[4]) # tree depth parameter for Stan. Default is 10 but adjust accordingly
-random_seed = as.integer(args[5]) # random seed parameter for Stan
+k <- as.integer(args[5]) # each smooth will have k building block functions to approximate true function
+random_seed = as.integer(args[6]) # random seed parameter for Stan
+
 
 print(paste("feature type: ", feature_type))
 print(paste("normalize: ", normalize))
 print(paste("adapt delta: ", adapt_d))
 print(paste("maximum tree depth: ", treedepth))
+print(paste("smoothing parameter k:", k))
 print(paste("random seed: ", random_seed))
 
 # specify file names for data
@@ -40,9 +42,9 @@ traindata_master <- read.csv(trainfile, header=TRUE)
 # Define formula and priors -----------------------------------------------
 
 if (feature_type=="GLM"){
-  formula <- as.factor(PA) ~ 0 + Intercept + s(BIO03_Mean) + s(TN10P_IDW1N10) +
-    s(GSL_IDW1N10) + s(TNX_IDW1N10) + s(ID_IDW1N10) + s(BIO14_Mean) + s(BIO18_Mean) +
-    s(CWD_IDW1N10) + s(RX1DAY_IDW1N10) + s(WSDI_IDW1N10)
+  formula <- as.factor(PA) ~ 0 + Intercept + s(BIO03_Mean, k=k) + s(TN10P_IDW1N10, k=k) +
+    s(GSL_IDW1N10, k=k) + s(TNX_IDW1N10, k=k) + s(ID_IDW1N10, k=k) + s(BIO14_Mean, k=k) + 
+    s(BIO18_Mean, k=k) + s(CWD_IDW1N10, k=k) + s(RX1DAY_IDW1N10, k=k) + s(WSDI_IDW1N10, k=k)
   priors <- c(set_prior("normal(0,5)", class="b", coef="sBIO03_Mean_1"),
               set_prior("normal(0,5)", class="b", coef="sTN10P_IDW1N10_1"),
               set_prior("normal(0,5)", class="b", coef="sGSL_IDW1N10_1"),
@@ -55,9 +57,9 @@ if (feature_type=="GLM"){
               set_prior("normal(0,5)", class="b", coef="sWSDI_IDW1N10_1"),
               set_prior("normal(0,10)", class="b", coef="Intercept"))
 }else{
-  formula <- as.factor(PA) ~ 0 + Intercept + s(BIO08_Mean) + s(TXX_IDW1N10) +
-    s(BIO02_Mean) + s(TN90P_IDW1N10) + s(ID_IDW1N10) + s(BIO14_Mean) + 
-    s(BIO18_Mean) + s(CWD_IDW1N10) + s(RX1DAY_IDW1N10) + s(WSDI_IDW1N10)
+  formula <- as.factor(PA) ~ 0 + Intercept + s(BIO08_Mean, k=k) + s(TXX_IDW1N10, k=k) +
+    s(BIO02_Mean, k=k) + s(TN90P_IDW1N10, k=k) + s(ID_IDW1N10, k=k) + s(BIO14_Mean, k=k) + 
+    s(BIO18_Mean, k=k) + s(CWD_IDW1N10, k=k) + s(RX1DAY_IDW1N10, k=k) + s(WSDI_IDW1N10, k=k)
   priors <- c(set_prior("normal(0,5)", class="b", coef="sBIO08_Mean_1"),
               set_prior("normal(0,5)", class="b", coef="sTXX_IDW1N10_1"),
               set_prior("normal(0,5)", class="b", coef="sBIO02_Mean_1"),
