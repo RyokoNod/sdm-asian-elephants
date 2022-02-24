@@ -59,10 +59,10 @@ if (feature_type=="GLM"){
   formula <- as.factor(PA) ~ 0 + Intercept + s(BIO08_Mean, k=k) + s(TXX_IDW1N10, k=k) +
     s(BIO02_Mean, k=k) + s(TN90P_IDW1N10, k=k) + s(ID_IDW1N10, k=k) + s(BIO14_Mean, k=k) + 
     s(BIO18_Mean, k=k) + s(CWD_IDW1N10, k=k) + s(RX1DAY_IDW1N10, k=k) + s(WSDI_IDW1N10, k=k)
-  priors <- c(set_prior("normal(0,1)", class="b", coef="s(BIO08_Mean, k = k)"),
-              set_prior("normal(0,1)", class="b", coef="s(TXX_IDW1N10, k = k)"),
-              set_prior("normal(0,1)", class="b", coef="s(BIO02_Mean, k = k)"),
-              set_prior("normal(0,1)", class="b", coef="s(TN90P_IDW1N10, k = k"),
+  priors <- c(set_prior("normal(0,1)", class="sds", coef="s(BIO08_Mean, k = k)"),
+              set_prior("normal(0,1)", class="sds", coef="s(TXX_IDW1N10, k = k)"),
+              set_prior("normal(0,1)", class="sds", coef="s(BIO02_Mean, k = k)"),
+              set_prior("normal(0,1)", class="sds", coef="s(TN90P_IDW1N10, k = k"),
               set_prior("normal(0,1)", class="sds", coef="s(ID_IDW1N10, k = k)"),
               set_prior("normal(0,1)", class="sds", coef="s(BIO14_Mean, k = k)"),
               set_prior("normal(0,1)", class="sds", coef="s(BIO18_Mean, k = k)"),
