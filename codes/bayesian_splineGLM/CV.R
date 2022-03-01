@@ -22,8 +22,8 @@ feature_type <- args[1] # GLM for random CV feature set, SGLM for spatial CV fea
 normalize <- as.logical(args[2]) # TRUE if you want to normalize the data
 adapt_d <- as.double(args[3]) # adapt_delta parameter for Stan. If no idea put 0.99
 treedepth <- as.integer(args[4]) # tree depth parameter for Stan. Default is 10 but adjust accordingly
-random_seed = as.integer(args[5]) # random seed parameter for Stan
 k <- as.integer(args[5]) # each smooth will have k building block functions to approximate true function
+random_seed = as.integer(args[6]) # random seed parameter for Stan
 print(paste("feature type: ", feature_type))
 print(paste("normalize: ", normalize))
 print(paste("adapt delta: ", adapt_d))
