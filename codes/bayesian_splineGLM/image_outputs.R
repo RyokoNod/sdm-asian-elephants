@@ -44,7 +44,7 @@ if (normalize==TRUE){
 evals <- readRDS(evals_file)
 formattable(evals) # display scores
 
-# Calibration plots -------------------------------------------------------
+# Calibration plots (validation folds) -------------------------------------------------------
 
 # load validation predictions
 if (normalize==TRUE){
@@ -65,6 +65,33 @@ ggplot(calPlotData)
 
 # the new calibration plot by Dimitriadis et al. 2021
 newcalPlot <- reliabilitydiag(EMOS = valpreds_all$valpred, y = valpreds_all$PA)
+reliabilitydiag::autoplot(newcalPlot)+
+  labs(x="Predicted Probabilities",
+       y="Conditional event probabilities")+
+  bayesplot::theme_default(base_family = "sans")
+
+
+# Calibration plots (training folds) -------------------------------------------------------
+
+# load training predictions
+if (normalize==TRUE){
+  trainpreds_file <-  paste(resultfolder,'trainpreds_bayessplineGLM_',feature_type,'norm_seed', random_seed, 
+                          '.csv',sep='')
+}else{
+  trainpreds_file <-  paste(resultfolder,'trainpreds_bayessplineGLM_',feature_type,'unnorm_seed', random_seed, 
+                          '.csv',sep='')
+}
+trainpreds_all <- read.csv(trainpreds_file)
+
+# traditional calibration plot with 10 bins
+calPlotData<-calibration(factor(trainpreds_all$PA) ~ bayes_GLM, 
+                         data = data.frame(bayes_GLM=trainpreds_all$trainpreds_mean,
+                                           y=factor(trainpreds_all$PA)), 
+                         cuts=10, class="1", auto.key = list(columns = 2))
+ggplot(calPlotData)
+
+# the new calibration plot by Dimitriadis et al. 2021
+newcalPlot <- reliabilitydiag(EMOS = trainpreds_all$trainpreds_mean, y = trainpreds_all$PA)
 reliabilitydiag::autoplot(newcalPlot)+
   labs(x="Predicted Probabilities",
        y="Conditional event probabilities")+
