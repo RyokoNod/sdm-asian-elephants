@@ -8,8 +8,8 @@ source("../utils.R")
 resultfolder <- '../../data/Results/Bayesian_splineGLM/bnorm_sdst/k_default/'
 datafolder <- '../../data/Modeling_Data/'
 
-feature_type <- 'GLM'
-normalize <-FALSE
+feature_type <- 'SGLM'
+normalize <- TRUE
 random_seed = 12244
 
 
@@ -88,6 +88,7 @@ pres_preds <- read.csv(pres_preds_file)
 trainfile <- paste(datafolder,'traindata_',feature_type,'.csv',sep='')
 traindata_master <- read.csv(trainfile, header=TRUE)
 
+# stick the presence/absence together
 trainpreds <- filter(pres_preds, HID %in% traindata_master$HID)
 trainpreds <- left_join(trainpreds, traindata_master[c("HID", "PA")], by="HID")
 

@@ -13,7 +13,7 @@ random_seed = 12244 # set random seed
 datafolder <- '../../data/Modeling_Data/'
 resultfolder <- '../../data/Results/Bayesian_linearGLM/'
 feature_type <- 'SGLM' # GLM for random CV feature set, SGLM for spatial CV feature set
-normalize <- TRUE # TRUE if you want to normalize the data
+normalize <- FALSE # TRUE if you want to normalize the data
 adapt_d <- 0.99
 treedepth <- 10
 
@@ -299,7 +299,7 @@ my_sso <- launch_shinystan(blinGLM)
 
 
 
-# Calibration plots -------------------------------------------------------
+# Calibration plots (validation folds) -------------------------------------------------------
 
 # load in case RStudio crashed
 if (normalize==TRUE){
@@ -320,6 +320,38 @@ ggplot(calPlotData)
 
 # the new calibration plot by Dimitriadis et al. 2021
 newcalPlot <- reliabilitydiag(EMOS = valpreds_all$valpred, y = valpreds_all$PA)
+reliabilitydiag::autoplot(newcalPlot)+
+  labs(x="Predicted Probabilities",
+       y="Conditional event probabilities")+
+  bayesplot::theme_default(base_family = "sans")
+
+
+# Calibration plots (training data, final model) -------------------------------------------------------
+
+# load training predictions
+if (normalize==TRUE){
+  pres_preds_file <-  paste(resultfolder,'pres_preds_bayeslinGLM_',feature_type,'norm_seed', random_seed, 
+                            '.csv',sep='')
+}else{
+  pres_preds_file <-  paste(resultfolder,'pres_preds_bayeslinGLM_',feature_type,'unnorm_seed', random_seed, 
+                            '.csv',sep='')
+}
+pres_preds <- read.csv(pres_preds_file)
+
+
+# stick the presence/absence together
+trainpreds <- filter(pres_preds, HID %in% traindata_master$HID)
+trainpreds <- left_join(trainpreds, traindata_master[c("HID", "PA")], by="HID")
+
+# traditional calibration plot with 10 bins
+calPlotData<-calibration(factor(trainpreds$PA) ~ bayes_GLM, 
+                         data = data.frame(bayes_GLM=trainpreds$median_probs,
+                                           y=factor(trainpreds$PA)), 
+                         cuts=10, class="1", auto.key = list(columns = 2))
+ggplot(calPlotData)
+
+# the new calibration plot by Dimitriadis et al. 2021
+newcalPlot <- reliabilitydiag(EMOS = trainpreds$median_probs, y = trainpreds$PA)
 reliabilitydiag::autoplot(newcalPlot)+
   labs(x="Predicted Probabilities",
        y="Conditional event probabilities")+
