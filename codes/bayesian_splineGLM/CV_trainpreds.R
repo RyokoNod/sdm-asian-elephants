@@ -73,8 +73,9 @@ for (f in 1:nfolds){
   colnames(trainpreds_all)[colnames(trainpreds_all) == "trainpred"] <- paste("trainpred",f, sep='')
 }
 
-# add the mean of the folds at the end
+# add the mean of the folds and true labels at the end
 trainpreds_all$trainpreds_mean <- rowMeans(select(trainpreds_all,contains("trainpred")), na.rm=TRUE)
+trainpreds_all <- left_join(trainpreds_all,traindata_master[c("HID","PA")], by="HID")
 
 print("Got the training predictions")
 print("Writing the predictions...")
