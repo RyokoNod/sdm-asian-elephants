@@ -5,10 +5,11 @@ library(reliabilitydiag)
 library(shinystan)
 source("../utils.R")
 
-resultfolder <- '../../data/Results/Bayesian_splineGLM/'
+resultfolder <- '../../data/Results/Bayesian_splineGLM/bnorm_sdst/k_default/'
+datafolder <- '../../data/Modeling_Data/'
 
 feature_type <- 'GLM'
-normalize <- FALSE
+normalize <-FALSE
 random_seed = 12244
 
 
@@ -71,27 +72,34 @@ reliabilitydiag::autoplot(newcalPlot)+
   bayesplot::theme_default(base_family = "sans")
 
 
-# Calibration plots (training folds) -------------------------------------------------------
+# Calibration plots (training data, final model) -------------------------------------------------------
 
 # load training predictions
 if (normalize==TRUE){
-  trainpreds_file <-  paste(resultfolder,'trainpreds_bayessplineGLM_',feature_type,'norm_seed', random_seed, 
+  pres_preds_file <-  paste(resultfolder,'pres_preds_bayessplineGLM_',feature_type,'norm_seed', random_seed, 
                           '.csv',sep='')
 }else{
-  trainpreds_file <-  paste(resultfolder,'trainpreds_bayessplineGLM_',feature_type,'unnorm_seed', random_seed, 
+  pres_preds_file <-  paste(resultfolder,'pres_preds_bayessplineGLM_',feature_type,'unnorm_seed', random_seed, 
                           '.csv',sep='')
 }
-trainpreds_all <- read.csv(trainpreds_file)
+pres_preds <- read.csv(pres_preds_file)
+
+# import the present-day climate variables with Asian elephant presence
+trainfile <- paste(datafolder,'traindata_',feature_type,'.csv',sep='')
+traindata_master <- read.csv(trainfile, header=TRUE)
+
+trainpreds <- filter(pres_preds, HID %in% traindata_master$HID)
+trainpreds <- left_join(trainpreds, traindata_master[c("HID", "PA")], by="HID")
 
 # traditional calibration plot with 10 bins
-calPlotData<-calibration(factor(trainpreds_all$PA) ~ bayes_GLM, 
-                         data = data.frame(bayes_GLM=trainpreds_all$trainpreds_mean,
-                                           y=factor(trainpreds_all$PA)), 
+calPlotData<-calibration(factor(trainpreds$PA) ~ bayes_GLM, 
+                         data = data.frame(bayes_GLM=trainpreds$median_probs,
+                                           y=factor(trainpreds$PA)), 
                          cuts=10, class="1", auto.key = list(columns = 2))
 ggplot(calPlotData)
 
 # the new calibration plot by Dimitriadis et al. 2021
-newcalPlot <- reliabilitydiag(EMOS = trainpreds_all$trainpreds_mean, y = trainpreds_all$PA)
+newcalPlot <- reliabilitydiag(EMOS = trainpreds$median_probs, y = trainpreds$PA)
 reliabilitydiag::autoplot(newcalPlot)+
   labs(x="Predicted Probabilities",
        y="Conditional event probabilities")+
