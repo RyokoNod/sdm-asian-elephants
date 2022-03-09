@@ -1,3 +1,4 @@
+library(brms)
 library(caret)
 library(dplyr)
 library(formattable)
@@ -5,11 +6,13 @@ library(reliabilitydiag)
 library(shinystan)
 source("../utils.R")
 
+modelfolder <- './bnorm_sdst/response_notfactor/'
 resultfolder <- '../../data/Results/Bayesian_splineGLM/bnorm_sdst/k_default/'
 datafolder <- '../../data/Modeling_Data/'
 
 feature_type <- 'SGLM'
-normalize <- TRUE
+normalize <- FALSE
+k <- -1 # the number of basis functions used for the model
 random_seed = 12244
 
 
@@ -18,22 +21,49 @@ random_seed = 12244
 # load model
 if (normalize==TRUE){
   if (feature_type=="GLM"){
-    bsplineGLM <- readRDS("bayessplineGLM_norm_randCVfeat_model.rds") 
+    bsplineGLM <- readRDS(paste(modelfolder, "bayessplineGLM_norm_randCVfeat_model.rds", sep='')) 
   }
   if (feature_type=="SGLM"){
-    bsplineGLM <- readRDS("bayessplineGLM_norm_spatialCVfeat_model.rds") 
+    bsplineGLM <- readRDS(paste(modelfolder, "bayessplineGLM_norm_spatialCVfeat_model.rds", sep='')) 
   }
 } else {
   if (feature_type=="GLM"){
-    bsplineGLM <- readRDS("bayessplineGLM_randCVfeat_model.rds") 
+    bsplineGLM <- readRDS(paste(modelfolder, "bayessplineGLM_randCVfeat_model.rds", sep='')) 
   }
   if (feature_type=="SGLM"){
-    bsplineGLM <- readRDS("bayessplineGLM_spatialCVfeat_model.rds") 
+    bsplineGLM <- readRDS(paste(modelfolder, "bayessplineGLM_spatialCVfeat_model.rds", sep='')) 
   }
 }
 
 # see model statistics in shinystan
 my_sso <- launch_shinystan(bsplineGLM)
+
+
+# Conditional smooths and effects -----------------------------------------------------
+
+# load model
+if (normalize==TRUE){
+  if (feature_type=="GLM"){
+    bsplineGLM <- readRDS(paste(modelfolder, "bayessplineGLM_norm_randCVfeat_model.rds", sep='')) 
+  }
+  if (feature_type=="SGLM"){
+    bsplineGLM <- readRDS(paste(modelfolder, "bayessplineGLM_norm_spatialCVfeat_model.rds", sep='')) 
+  }
+} else {
+  if (feature_type=="GLM"){
+    bsplineGLM <- readRDS(paste(modelfolder, "bayessplineGLM_randCVfeat_model.rds", sep='')) 
+  }
+  if (feature_type=="SGLM"){
+    bsplineGLM <- readRDS(paste(modelfolder, "bayessplineGLM_spatialCVfeat_model.rds", sep='')) 
+  }
+}
+
+# splines
+conditional_smooths(bsplineGLM)
+
+# conditional effects
+condeffs <- conditional_effects(bsplineGLM)
+plot(condeffs, points=TRUE)
 
 # Numerical score table ---------------------------------------------------
 
