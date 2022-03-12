@@ -6,14 +6,14 @@ library(reliabilitydiag)
 library(shinystan)
 source("../utils.R")
 
-modelfolder <- './bnorm_sdst/response_notfactor/'
-resultfolder <- '../../data/Results/Bayesian_splineGLM/bnorm_sdst/k_default/'
+modelfolder <- './bnorm_sdsnorm/k1/'
+resultfolder <- '../../data/Results/Bayesian_splineGLM/'
 datafolder <- '../../data/Modeling_Data/'
 
 feature_type <- 'SGLM'
-normalize <- FALSE
-k <- -1 # the number of basis functions used for the model
-random_seed = 12244
+normalize <- TRUE
+k <- 1 # the number of basis functions used for the model
+random_seed <- 12244
 
 
 # Stan diagnostics --------------------------------------------------------
@@ -64,6 +64,47 @@ conditional_smooths(bsplineGLM)
 # conditional effects
 condeffs <- conditional_effects(bsplineGLM)
 plot(condeffs, points=TRUE)
+
+
+# Conditional effect contour for feature pair -----------------------------
+
+trainfile <- paste(datafolder,'traindata_',feature_type,'.csv',sep='')
+traindata_master <- read.csv(trainfile, header=TRUE)
+
+# separate the labels and features from the master training data
+train_features <- subset(traindata_master, select=-c(HID, Folds, PA))
+
+if (normalize==TRUE){
+  preProc <- preProcess(train_features, method=c("range"))
+  train_features <- predict(preProc, train_features)
+}
+
+# choose feature pair from this list
+colnames(train_features)
+
+# specify feature here
+feature1 <- "BIO08_Mean"
+feature2 <- "CWD_IDW1N10"
+
+# load model
+if (normalize==TRUE){
+  if (feature_type=="GLM"){
+    model <- readRDS(paste(modelfolder, "bayessplineGLM_norm_randCVfeat_model.rds", sep='')) 
+  }
+  if (feature_type=="SGLM"){
+    model <- readRDS(paste(modelfolder, "bayessplineGLM_norm_spatialCVfeat_model.rds", sep='')) 
+  }
+} else {
+  if (feature_type=="GLM"){
+    model <- readRDS(paste(modelfolder, "bayessplineGLM_randCVfeat_model.rds", sep='')) 
+  }
+  if (feature_type=="SGLM"){
+    model <- readRDS(paste(modelfolder, "bayessplineGLM_spatialCVfeat_model.rds", sep='')) 
+  }
+}
+
+# plot conditional effect contour
+condeff_surface(model, train_features, feature1, feature2, avgline=FALSE)
 
 # Numerical score table ---------------------------------------------------
 
