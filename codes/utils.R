@@ -297,8 +297,8 @@ condeff_surface <- function(model, traindata, feature1, feature2, avgline=TRUE){
   # If avgline=TRUE, draws a dashed line through the average of feature2 so that the plot shows
   # where the surface was cut for the default plot in brms's conditional_effect().
   # <Parameters>
-  # model: The BRMS model after inference.
-  # traindata: The training data dataframe.
+  # model: The BRMS model after inference
+  # traindata: The training data dataframe
   # feature1: The feature to be plotted on the x-axis. Specify as character string.
   # feature2: The feature to be plotted on the y-axis. Specify as character string.
   # avgline: Whether or not to draw a horizontal line through the average of feaure2. Logical.
