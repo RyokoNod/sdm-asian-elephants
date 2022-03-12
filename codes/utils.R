@@ -291,7 +291,36 @@ brmsGLM_testpred <- function(model, test_data, matrixpath, csvpath, N=500){
 
 
 
-
+condeff_surface <- function(model, traindata, feature1, feature2, avgline=TRUE){
+  # <Overview>
+  # Plots a conditional effect surface plot for the specified features.
+  # If avgline=TRUE, draws a dashed line through the average of feature2 so that the plot shows
+  # where the surface was cut for the default plot in brms's conditional_effect().
+  # <Parameters>
+  # model: The BRMS model after inference.
+  # traindata: The training data dataframe.
+  # feature1: The feature to be plotted on the x-axis. Specify as character string.
+  # feature2: The feature to be plotted on the y-axis. Specify as character string.
+  # avgline: Whether or not to draw a horizontal line through the average of feaure2. Logical.
+  # <Returns>
+  # Does not return anything. Just plots the contour plot.
+  feature2_mean <- apply(train_features[feature2], 2, mean)
+  eff <- paste(feature1, feature2, sep=":")
+  
+  cond_surface <- conditional_effects(model, effects=eff, surface=TRUE)
+  
+  if (avgline==TRUE){
+    ggplot(cond_surface[[eff]], aes(x = effect1__, effect2__, z = estimate__)) + 
+      geom_contour_filled() + 
+      geom_hline(yintercept =feature2_mean, linetype="dashed", color="red") +
+      labs(x=feature1, y=feature2, fill="probs")
+  } else{
+    ggplot(cond_surface[[eff]], aes(x = effect1__, effect2__, z = estimate__)) + 
+      geom_contour_filled() + 
+      labs(x=feature1, y=feature2, fill="probs")
+  }
+  
+}
 
 
 
