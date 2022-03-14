@@ -9,7 +9,7 @@ source("../utils.R")
 options(mc.cores=parallel::detectCores())  # use all available cores
 
 # settings
-random_seed = 12244 # set random seed
+random_seed <- 12244 # set random seed
 datafolder <- '../../data/Modeling_Data/'
 resultfolder <- '../../data/Results/Bayesian_linearGLM/'
 feature_type <- 'SGLM' # GLM for random CV feature set, SGLM for spatial CV feature set
