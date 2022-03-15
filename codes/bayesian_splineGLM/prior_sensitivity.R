@@ -7,7 +7,7 @@ modelfolder <- './bnorm_sdst/k_default/response_notfactor/'
 
 feature_type <- 'GLM'
 normalize <- TRUE
-k <- -1 # the number of basis functions used for the model
+k <- -1 # the k you used in the brms formula. It's weird but the predictions need this
 
 # load model
 if (normalize==TRUE){

@@ -12,7 +12,7 @@ datafolder <- '../../data/Modeling_Data/'
 
 feature_type <- 'SGLM'
 normalize <- TRUE
-k <- 1 # the number of basis functions used for the model
+k <- 1 # somehow we need k even though we aren't fitting the model here
 random_seed <- 12244
 
 
