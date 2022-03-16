@@ -109,9 +109,9 @@ condeff_surface(model, train_features, feature1, feature2, avgline=FALSE)
 # Numerical score table ---------------------------------------------------
 
 if (normalize==TRUE){
-  evals_file <-  paste('CVresult_matrix_n',feature_type,'_seed', random_seed, '.rds',sep='')
+  evals_file <-  paste(modelfolder,'CVresult_matrix_n',feature_type,'_seed', random_seed, '.rds',sep='')
 }else{
-  evals_file <-  paste('CVresult_matrix_',feature_type,'_seed', random_seed, '.rds',sep='')
+  evals_file <-  paste(modelfolder,'CVresult_matrix_',feature_type,'_seed', random_seed, '.rds',sep='')
 }
 evals <- readRDS(evals_file)
 formattable(evals) # display scores
