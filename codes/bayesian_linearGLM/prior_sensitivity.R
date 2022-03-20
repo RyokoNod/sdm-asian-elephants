@@ -3,11 +3,10 @@ library(priorsense)
 library(dplyr)
 library(formattable)
 
-modelfolder <- './'
+modelfolder <- './response_notfactor/'
 
 feature_type <- 'SGLM'
 normalize <- TRUE
-k <- -1 # the number of basis functions used for the model
 
 # load model
 if (normalize==TRUE){
