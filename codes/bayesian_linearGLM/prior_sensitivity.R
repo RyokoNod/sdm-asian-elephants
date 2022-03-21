@@ -3,10 +3,10 @@ library(priorsense)
 library(dplyr)
 library(formattable)
 
-modelfolder <- './response_notfactor/'
+modelfolder <- './'
 
-feature_type <- 'SGLM'
-normalize <- TRUE
+feature_type <- 'GLM'
+normalize <- FALSE
 
 # load model
 if (normalize==TRUE){
