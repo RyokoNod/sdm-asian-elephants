@@ -291,7 +291,8 @@ brmsGLM_testpred <- function(model, test_data, matrixpath, csvpath, N=500){
 
 
 
-condeff_surface <- function(model, traindata, feature1, feature2, avgline=TRUE){
+condeff_surface <- function(model, traindata, feature1, feature2, avgline=TRUE, 
+                            trainpoints=TRUE){
   # <Overview>
   # Plots a conditional effect surface plot for the specified features.
   # If avgline=TRUE, draws a dashed line through the average of feature2 so that the plot shows
@@ -302,24 +303,34 @@ condeff_surface <- function(model, traindata, feature1, feature2, avgline=TRUE){
   # feature1: The feature to be plotted on the x-axis. Specify as character string.
   # feature2: The feature to be plotted on the y-axis. Specify as character string.
   # avgline: Whether or not to draw a horizontal line through the average of feaure2. Logical.
+  # trainpoints: Whether of not to plot the training data on the surface. Logical.
   # <Returns>
   # Does not return anything. Just plots the contour plot.
+  
+  
+  names(train_features)[names(train_features) == 'PA'] <- 'labels'
   feature2_mean <- apply(train_features[feature2], 2, mean)
   eff <- paste(feature1, feature2, sep=":")
   
+  # if I don't perturb 1s and 0s slightly, ggplot fails to plot them
   cond_surface <- conditional_effects(model, effects=eff, surface=TRUE)
+  cond_surface[[eff]]$estimate__[cond_surface[[eff]]$estimate__ == 1] <- 1 - 1e-06  
+  cond_surface[[eff]]$estimate__[cond_surface[[eff]]$estimate__ == 0] <- 0 + 1e-06
   
-  if (avgline==TRUE){
-    ggplot(cond_surface[[eff]], aes(x = effect1__, effect2__, z = estimate__)) + 
-      geom_contour_filled() + 
-      geom_hline(yintercept =feature2_mean, linetype="dashed", color="red") +
-      labs(x=feature1, y=feature2, fill="probs")
-  } else{
-    ggplot(cond_surface[[eff]], aes(x = effect1__, effect2__, z = estimate__)) + 
-      geom_contour_filled() + 
-      labs(x=feature1, y=feature2, fill="probs")
+  surface_plot <- ggplot() +
+    geom_contour_filled(data=cond_surface[[eff]], aes(x = effect1__, y = effect2__, z = estimate__)) +
+    labs(x=feature1, y=feature2, fill="predictions") 
+  
+  if (trainpoints==TRUE){
+    surface_plot <- surface_plot +
+      geom_point(data=train_features, aes_string(x=feature1,y= feature2, color="labels"), alpha = 0.5) +
+      scale_color_manual(values=c("#33FFFF","#FF66FF"))
   }
-  
+  if (avgline==TRUE){
+    surface_plot <- surface_plot +
+      geom_hline(yintercept =feature2_mean, linetype="dashed", color="red")
+  }
+  print(surface_plot)
 }
 
 

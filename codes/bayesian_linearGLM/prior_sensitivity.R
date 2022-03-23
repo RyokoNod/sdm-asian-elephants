@@ -5,9 +5,8 @@ library(formattable)
 
 modelfolder <- './'
 
-feature_type <- 'SGLM'
-normalize <- TRUE
-k <- -1 # the number of basis functions used for the model
+feature_type <- 'GLM'
+normalize <- FALSE
 
 # load model
 if (normalize==TRUE){
