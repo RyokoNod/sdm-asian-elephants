@@ -6,13 +6,13 @@ library(reliabilitydiag)
 library(shinystan)
 source("../utils.R")
 
-modelfolder <- './bnorm_sdsnorm/k1/'
+modelfolder <- './bnorm_sdst/k_default/response_notfactor/'
 resultfolder <- '../../data/Results/Bayesian_splineGLM/'
 datafolder <- '../../data/Modeling_Data/'
 
 feature_type <- 'SGLM'
-normalize <- TRUE
-k <- 1 # somehow we need k even though we aren't fitting the model here
+normalize <- FALSE
+k <- -1 # somehow we need k even though we aren't fitting the model here
 random_seed <- 12244
 
 
@@ -78,13 +78,8 @@ if (normalize==TRUE){
   preProc <- preProcess(train_features, method=c("range"))
   train_features <- predict(preProc, train_features)
 }
+train_features <- cbind(HID=traindata_master$HID, train_features, PA=factor(traindata_master$PA))
 
-# choose feature pair from this list
-colnames(train_features)
-
-# specify feature here
-feature1 <- "BIO08_Mean"
-feature2 <- "CWD_IDW1N10"
 
 # load model
 if (normalize==TRUE){
@@ -102,6 +97,13 @@ if (normalize==TRUE){
     model <- readRDS(paste(modelfolder, "bayessplineGLM_spatialCVfeat_model.rds", sep='')) 
   }
 }
+
+# choose feature pair from this list
+colnames(train_features)
+
+# specify feature here
+feature1 <- "ID_IDW1N10"
+feature2 <- "RX1DAY_IDW1N10"
 
 # plot conditional effect contour
 condeff_surface(model, train_features, feature1, feature2, avgline=FALSE)
