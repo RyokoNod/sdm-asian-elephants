@@ -12,8 +12,8 @@ options(mc.cores=parallel::detectCores())  # use all available cores
 random_seed <- 12244 # set random seed
 datafolder <- '../../data/Modeling_Data/'
 resultfolder <- '../../data/Results/Bayesian_linearGLM/'
-feature_type <- 'SGLM' # GLM for random CV feature set, SGLM for spatial CV feature set
-normalize <-TRUE # TRUE if you want to normalize the data
+feature_type <- 'GLM' # GLM for random CV feature set, SGLM for spatial CV feature set
+normalize <-FALSE # TRUE if you want to normalize the data
 adapt_d <- 0.99
 treedepth <- 10
 
@@ -283,7 +283,7 @@ brmsGLM_testpred(blinGLM, testdata, matrixpath=preds_matrix, csvpath=preds_file)
 
 # Model statistics --------------------------------------------------------
 
-# load model id needed
+# load model if needed
 if (normalize==TRUE){
   if (feature_type=="GLM"){
     blinGLM <- readRDS("bayeslinGLM_norm_randCVfeat_model.rds") 
