@@ -1,4 +1,8 @@
 
+# relabeled Shinystan posteriors ------------------------------------------
+
+library(shinystan)
+
 plot_shinystan_posteriors <- function(p, renamed_params, title){
   
   p$data$params <- renamed_params
@@ -36,6 +40,49 @@ plot_shinystan_posteriors(shinystan_multiparam_gg, renamed_params, plot_title)
 
 
 
+
+
+
+
+
+
+
+# relabeled conditional effects, Bayesian GLM  -------------------------------------------
+
+library(brms)
+library(ggplot2)
+
+# settings
+random_seed <- 12244 # set random seed
+feature_type <- 'GLM' # GLM for random CV feature set, SGLM for spatial CV feature set
+normalize <-TRUE # TRUE if you want to normalize the data
+
+modelfolder <- './bayesian_linearGLM/adjusted_priors/'
+
+# load model
+if (normalize==TRUE){
+  if (feature_type=="GLM"){
+    blinGLM <- readRDS(paste(modelfolder, "bayeslinGLM_norm_randCVfeat_model.rds", sep='')) 
+  }
+  if (feature_type=="SGLM"){
+    blinGLM <- readRDS(paste(modelfolder, "bayeslinGLM_norm_spatialCVfeat_model.rds",sep='')) 
+  }
+} else {
+  if (feature_type=="GLM"){
+    blinGLM <- readRDS(paste(modelfolder, "bayeslinGLM_randCVfeat_model.rds", sep='')) 
+  }
+  if (feature_type=="SGLM"){
+    blinGLM <- readRDS(paste(modelfolder, "bayeslinGLM_spatialCVfeat_model.rds", sep='')) 
+  }
+}
+
+# conditional regression line
+condreg <- conditional_effects(blinGLM, method="posterior_linpred")
+
+ggplot(data=condreg$BIO14_Mean) +
+  geom_ribbon(aes(x=effect1__, ymin = lower__, ymax = upper__), alpha = 0.1) +
+  geom_line(aes(x=effect1__, y=estimate__), color="blue") +
+  xlab("scaled BIO14") + ylab("log-odds")
 
 
 
