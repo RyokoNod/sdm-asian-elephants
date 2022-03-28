@@ -16,25 +16,25 @@ plot_shinystan_posteriors <- function(p, renamed_params, title){
 }
 
 
-shinystan_output_folder <- "./bayesian_linearGLM/adjusted_priors/"
-shinystan_output_file <- "bayeslinGLM_randCVfeat_posteriors_adjpriors.RData"
+shinystan_output_folder <- "./bayesian_splineGLM/bnorm_sdst/k_default/response_notfactor/"
+shinystan_output_file <- "bayessplineGLM_norm_randCVfeat_posteriors_norm-t-kd.RData"
 
 load(paste(shinystan_output_folder, shinystan_output_file, sep=""))
 
-plot_title <- "Raw random CV features/ adjusted priors"
+plot_title <- "Scaled random CV features/ initial priors and basis dimension"
 
-#renamed_params <- c("Intercept", "Coeff BIO08",
-#                  "Coeff TXX", "Coeff BIO02",
-#                  "Coeff TN90P", "Coeff ID",
-#                  "Coeff BIO14", "Coeff BIO18",
-#                  "Coeff CWD", "Coeff RX1DAY",
-#                  "Coeff WSDI")
-renamed_params <- c("Intercept", "Coeff BIO03",
-                    "Coeff TN10P", "Coeff GSL",
-                    "Coeff TNX", "Coeff ID",
-                    "Coeff BIO14", "Coeff BIO18",
-                    "Coeff CWD", "Coeff RX1DAY",
-                    "Coeff WSDI")
+#renamed_params <- c("Intercept", "Coeff BIO03",
+#                    "Coeff TN10P", "Coeff GSL",
+#                    "Coeff TNX", "Coeff ID",
+#                    "Coeff BIO14", "Coeff BIO18",
+#                    "Coeff CWD", "Coeff RX1DAY",
+#                    "Coeff WSDI")
+renamed_params <- c("Intercept", "Coeff BIO03", "Coeff TN10P", "Coeff GSL",
+                    "Coeff TNX", "Coeff ID", "Coeff BIO14", "Coeff BIO18",
+                    "Coeff CWD", "Coeff RX1DAY", "Coeff WSDI",
+                    "NL BIO03", "NL TN10P", "NL GSL",
+                    "NL TNX", "NL ID", "NL BIO14", "NL BIO18",
+                    "NL CWD", "NL RX1DAY", "NL WSDI")
 
 plot_shinystan_posteriors(shinystan_multiparam_gg, renamed_params, plot_title)
 
