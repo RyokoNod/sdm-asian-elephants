@@ -294,7 +294,8 @@ brmsGLM_testpred <- function(model, test_data, matrixpath, csvpath, N=500){
 condeff_surface <- function(model, traindata, feature1, feature2, avgline=TRUE, 
                             trainpoints=TRUE){
   # <Overview>
-  # Plots a conditional effect surface plot for the specified features.
+  # Plots a conditional effect surface plot in the range of the 
+  # training data for the specified features.
   # If avgline=TRUE, draws a dashed line through the average of feature2 so that the plot shows
   # where the surface was cut for the default plot in brms's conditional_effect().
   # <Parameters>
@@ -308,9 +309,12 @@ condeff_surface <- function(model, traindata, feature1, feature2, avgline=TRUE,
   # Does not return anything. Just plots the contour plot.
   
   
-  names(train_features)[names(train_features) == 'PA'] <- 'labels'
-  feature2_mean <- apply(train_features[feature2], 2, mean)
+  names(traindata)[names(traindata) == 'PA'] <- 'labels'
+  feature2_mean <- apply(traindata[feature2], 2, mean)
   eff <- paste(feature1, feature2, sep=":")
+  
+  # break point list for the predicted values
+  breaklist <- c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
   
   # if I don't perturb 1s and 0s slightly, ggplot fails to plot them
   cond_surface <- conditional_effects(model, effects=eff, surface=TRUE)
@@ -318,12 +322,14 @@ condeff_surface <- function(model, traindata, feature1, feature2, avgline=TRUE,
   cond_surface[[eff]]$estimate__[cond_surface[[eff]]$estimate__ == 0] <- 0 + 1e-06
   
   surface_plot <- ggplot() +
-    geom_contour_filled(data=cond_surface[[eff]], aes(x = effect1__, y = effect2__, z = estimate__)) +
+    geom_contour_filled(data=cond_surface[[eff]], 
+                        aes(x = effect1__, y = effect2__, z = estimate__),
+                        breaks=breaklist) +
     labs(x=feature1, y=feature2, fill="predictions") 
   
   if (trainpoints==TRUE){
     surface_plot <- surface_plot +
-      geom_point(data=train_features, aes_string(x=feature1,y= feature2, color="labels"), alpha = 0.5) +
+      geom_point(data=traindata, aes_string(x=feature1,y= feature2, color="labels"), alpha = 0.5) +
       scale_color_manual(values=c("#33FFFF","#FF66FF"))
   }
   if (avgline==TRUE){
@@ -331,6 +337,49 @@ condeff_surface <- function(model, traindata, feature1, feature2, avgline=TRUE,
       geom_hline(yintercept =feature2_mean, linetype="dashed", color="red")
   }
   print(surface_plot)
+}
+
+
+test_condeff_surface <- function(model, testdata, feature1, feature2){
+  # <Overview>
+  # Plots a conditional effect surface plot in the range of the test data
+  # (present-day and future combined) for the specified features.
+  # <Parameters>
+  # model: The BRMS model after inference
+  # testdata: The test data dataframe. Be sure to combine the present and future data
+  #           outside of this function. This function does not do it for you.
+  # feature1: The feature to be plotted on the x-axis. Specify as character string.
+  # feature2: The feature to be plotted on the y-axis. Specify as character string.
+  # <Returns>
+  # A ggplot object of the surface plot that covers the area of the test data.
+  
+  
+  #set the features to be plotted
+  eff <- paste(feature1, feature2, sep=":")
+  
+  # set the range for each feature axis. resolution is 30*30
+  maxf1 <- max(testdata[[feature1]])
+  minf1 <- min(testdata[[feature1]])
+  maxf2 <- max(testdata[[feature2]])
+  minf2 <- min(testdata[[feature2]])
+  cond <- list(f1 = seq(minf1, maxf1, length.out=30), f2=seq(minf2, maxf2, length.out=30))
+  names(cond) <- c(feature1, feature2)
+  
+  # break point list for the predicted values
+  breaklist <- c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
+  
+  # if I don't perturb 1s and 0s slightly, ggplot fails to plot them
+  cond_surface <- conditional_effects(model, effects=eff, int_conditions=cond, surface=TRUE)
+  cond_surface[[eff]]$estimate__[cond_surface[[eff]]$estimate__ == 1] <- 1 - 1e-06  
+  cond_surface[[eff]]$estimate__[cond_surface[[eff]]$estimate__ == 0] <- 0 + 1e-06
+  
+  surface_plot <- ggplot() +
+    geom_contour_filled(data=cond_surface[[eff]], 
+                        aes(x = effect1__, y = effect2__, z = estimate__),
+                        breaks=breaklist) +
+    xlab(sub("_.*","",feature1)) + ylab(sub("_.*","",feature2))
+  
+  return(surface_plot)
 }
 
 
