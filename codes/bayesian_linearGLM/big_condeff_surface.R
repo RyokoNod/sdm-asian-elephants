@@ -11,8 +11,8 @@ resultfolder <- '../../data/Results/Bayesian_linearGLM/adjusted_priors/'
 datafolder <- '../../data/Modeling_Data/'
 areafolder <- '../../data/Modeling_Data/areas_to_investigate/' # areas that were commonly weird in predictions
 
-feature_type <- 'GLM'
-normalize <- FALSE
+feature_type <- 'SGLM'
+normalize <- TRUE
 random_seed <- 12244
 trainrange <- TRUE
 novaya_zemlya <- TRUE
@@ -102,8 +102,8 @@ train_features <- cbind(HID=traindata_master$HID, train_features, PA=factor(trai
 colnames(train_features)
 
 # specify feature here
-feature1 <- "TN10P_IDW1N10"
-feature2 <- "CWD_IDW1N10"
+feature1 <- "TN90P_IDW1N10"
+feature2 <- "WSDI_IDW1N10"
 
 breaks <- c()
 colors<- c()

@@ -6,19 +6,19 @@ library(reliabilitydiag)
 library(shinystan)
 source("../utils.R")
 
-modelfolder <- './bnorm_sdsnorm/k1/'
+modelfolder <- './bnorm_sdst/k_default/response_notfactor/'
 resultfolder <- '../../data/Results/Bayesian_splineGLM/bnorm_sdsnorm/k1/'
 datafolder <- '../../data/Modeling_Data/'
 areafolder <- '../../data/Modeling_Data/areas_to_investigate/' # areas that were commonly weird in predictions
 
-feature_type <- 'GLM'
-normalize <- TRUE
-k <- 1 # somehow we need k even though we aren't fitting the model here
+feature_type <- 'SGLM'
+normalize <- FALSE
+k <- -1 # somehow we need k even though we aren't fitting the model here
 random_seed <- 12244
 trainrange <- TRUE
-novaya_zemlya <- FALSE
-greenland <- FALSE
-sahara <- FALSE
+novaya_zemlya <- TRUE
+greenland <- TRUE
+sahara <- TRUE
 
 # Data loading and processing ---------------------------------------------
 
@@ -103,8 +103,8 @@ train_features <- cbind(HID=traindata_master$HID, train_features, PA=factor(trai
 colnames(train_features)
 
 # specify feature here
-feature1 <- "RX1DAY_IDW1N10"
-feature2 <- "GSL_IDW1N10"
+feature1 <- "ID_IDW1N10"
+feature2 <- "CWD_IDW1N10"
 
 breaks <- c()
 colors<- c()
