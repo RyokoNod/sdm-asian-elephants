@@ -382,5 +382,31 @@ test_condeff_surface <- function(model, testdata, feature1, feature2){
   return(surface_plot)
 }
 
-
+plot_hollow_rec <- function(plotobj, data, feature1, feature, col, al=1.0){
+  # <Overview>
+  # Plots a hollow rectangle that covers the range of data[feature1] and data[feature2] 
+  # on plotobj Intended to be used in combination with test_condeff_surface to plot
+  # feature ranges of interest on the surface plot.
+  # <Parameters>
+  # plotobj: The surface plot returned from test_condeff_surface
+  # data: A dataframe of that contains feature1 and feature2 of the area of interest
+  # feature1: The feature to be plotted on the x-axis. Specify as character string
+  # feature2: The feature to be plotted on the y-axis. Specify as character string
+  # col: A string that matches the custom legend specified outside of this function
+  # al: The alpha value of the rectangle to be plotted. Default is 1.0
+  # <Returns>
+  # A surface plot with the feature range data overlaid as a hollow rectangle
+  minf1 <- min(data[[feature1]])
+  minf2 <- min(data[[feature2]])
+  maxf1 <- max(data[[feature1]])
+  maxf2 <- max(data[[feature2]])
+  
+  return_plot <- plotobj +
+    geom_segment(aes(x=minf1, y=minf2, xend=minf1, yend=maxf2, color=col), alpha=al) +
+    geom_segment(aes(x=minf1, y=maxf2, xend=maxf1, yend=maxf2, color=col), alpha=al) +
+    geom_segment(aes(x=maxf1, y=minf2, xend=maxf1, yend=maxf2, color=col), alpha=al) +
+    geom_segment(aes(x=minf1, y=minf2, xend=maxf1, yend=minf2, color=col), alpha=al)
+  
+  return(return_plot)
+}
 
