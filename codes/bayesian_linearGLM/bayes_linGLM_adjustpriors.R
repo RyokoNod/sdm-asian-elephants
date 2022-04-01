@@ -350,13 +350,14 @@ calPlotData<-calibration(factor(valpreds_all$PA) ~ bayes_linGLM,
                          data = data.frame(bayes_linGLM=valpreds_all$valpred,
                                            y=factor(valpreds_all$PA)), 
                          cuts=10, class="1", auto.key = list(columns = 2))
-ggplot(calPlotData)
+ggplot(calPlotData) + 
+  labs(x="Predicted probabilities (percentage)", y="Observed event frequencies (percentage)")
 
 # the new calibration plot by Dimitriadis et al. 2021
 newcalPlot <- reliabilitydiag(EMOS = valpreds_all$valpred, y = valpreds_all$PA)
 reliabilitydiag::autoplot(newcalPlot)+
-  labs(x="Predicted Probabilities",
-       y="Conditional event probabilities")+
+  labs(x="Predicted probabilities",
+       y="Observed event frequencies")+
   bayesplot::theme_default(base_family = "sans")
 
 
@@ -382,13 +383,14 @@ calPlotData<-calibration(factor(trainpreds$PA) ~ bayes_GLM,
                          data = data.frame(bayes_GLM=trainpreds$median_probs,
                                            y=factor(trainpreds$PA)), 
                          cuts=10, class="1", auto.key = list(columns = 2))
-ggplot(calPlotData)
+ggplot(calPlotData) + 
+  labs(x="Predicted probabilities (percentage)", y="Observed event frequencies (percentage)")
 
 # the new calibration plot by Dimitriadis et al. 2021
 newcalPlot <- reliabilitydiag(EMOS = trainpreds$median_probs, y = trainpreds$PA)
 reliabilitydiag::autoplot(newcalPlot)+
-  labs(x="Predicted Probabilities",
-       y="Conditional event probabilities")+
+  labs(x="Predicted probabilities",
+       y="Observed event frequencies")+
   bayesplot::theme_default(base_family = "sans")
 
 
