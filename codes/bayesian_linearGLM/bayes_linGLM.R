@@ -15,7 +15,7 @@ resultfolder <- '../../data/Results/Bayesian_linearGLM/baseline_priors/'
 feature_type <- 'GLM' # GLM for random CV feature set, SGLM for spatial CV feature set
 normalize <-FALSE # TRUE if you want to normalize the data
 adapt_d <- 0.99
-treedepth <- 10
+treedepth <- 11
 
 # specify file names for data
 trainfile <- paste(datafolder,'traindata_',feature_type,'.csv',sep='')
