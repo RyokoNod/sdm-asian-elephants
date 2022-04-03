@@ -3,7 +3,7 @@ library(priorsense)
 library(dplyr)
 library(formattable)
 
-modelfolder <- './'
+modelfolder <- './baseline_priors/response_notfactor/'
 
 feature_type <- 'GLM'
 normalize <- FALSE
@@ -26,7 +26,10 @@ if (normalize==TRUE){
 }
 
 sens <- powerscale_sensitivity(model)
-formattable(arrange(sens$sensitivity, variable))
+sens_table <- arrange(sens$sensitivity, variable)
 
 
+parameter_names <- variables(model)
+sens_table$variable <- parameter_names[1:11]
+formattable(sens_table)
 
