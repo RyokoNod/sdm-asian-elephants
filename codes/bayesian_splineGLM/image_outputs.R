@@ -6,13 +6,13 @@ library(reliabilitydiag)
 library(shinystan)
 source("../utils.R")
 
-modelfolder <- './bnorm_sdst/k_default/response_notfactor/'
-resultfolder <- '../../data/Results/Bayesian_splineGLM/bnorm_sdst/k_default/'
+modelfolder <- './bnorm_sdsnorm/k1/'
+resultfolder <- '../../data/Results/Bayesian_splineGLM/bnorm_sdsnorm/k1/'
 datafolder <- '../../data/Modeling_Data/'
 
 feature_type <- 'SGLM'
 normalize <- TRUE
-k <- -1 # somehow we need k even though we aren't fitting the model here
+k <- 1 # somehow we need k even though we aren't fitting the model here
 random_seed <- 12244
 
 
