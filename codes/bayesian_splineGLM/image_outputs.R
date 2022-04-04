@@ -7,11 +7,11 @@ library(shinystan)
 source("../utils.R")
 
 modelfolder <- './bnorm_sdst/k_default/response_notfactor/'
-resultfolder <- '../../data/Results/Bayesian_splineGLM/'
+resultfolder <- '../../data/Results/Bayesian_splineGLM/bnorm_sdst/k_default/'
 datafolder <- '../../data/Modeling_Data/'
 
 feature_type <- 'SGLM'
-normalize <- FALSE
+normalize <- TRUE
 k <- -1 # somehow we need k even though we aren't fitting the model here
 random_seed <- 12244
 
@@ -135,13 +135,14 @@ calPlotData<-calibration(factor(valpreds_all$PA) ~ bayes_GLM,
                          data = data.frame(bayes_GLM=valpreds_all$valpred,
                                            y=factor(valpreds_all$PA)), 
                          cuts=10, class="1", auto.key = list(columns = 2))
-ggplot(calPlotData)
+ggplot(calPlotData) + 
+  labs(x="Predicted probabilities (percentage)", y="Observed event frequencies (percentage)")
 
 # the new calibration plot by Dimitriadis et al. 2021
 newcalPlot <- reliabilitydiag(EMOS = valpreds_all$valpred, y = valpreds_all$PA)
 reliabilitydiag::autoplot(newcalPlot)+
-  labs(x="Predicted Probabilities",
-       y="Conditional event probabilities")+
+  labs(x="Predicted probabilities",
+       y="Observed event frequencies")+
   bayesplot::theme_default(base_family = "sans")
 
 
@@ -170,11 +171,12 @@ calPlotData<-calibration(factor(trainpreds$PA) ~ bayes_GLM,
                          data = data.frame(bayes_GLM=trainpreds$median_probs,
                                            y=factor(trainpreds$PA)), 
                          cuts=10, class="1", auto.key = list(columns = 2))
-ggplot(calPlotData)
+ggplot(calPlotData) + 
+  labs(x="Predicted probabilities (percentage)", y="Observed event frequencies (percentage)")
 
 # the new calibration plot by Dimitriadis et al. 2021
 newcalPlot <- reliabilitydiag(EMOS = trainpreds$median_probs, y = trainpreds$PA)
 reliabilitydiag::autoplot(newcalPlot)+
-  labs(x="Predicted Probabilities",
-       y="Conditional event probabilities")+
+  labs(x="Predicted probabilities",
+       y="Observed event frequencies")+
   bayesplot::theme_default(base_family = "sans")
