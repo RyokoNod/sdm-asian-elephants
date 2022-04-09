@@ -11,14 +11,14 @@ resultfolder <- '../../data/Results/Bayesian_splineGLM/bnorm_sdsnorm/k1/'
 datafolder <- '../../data/Modeling_Data/'
 areafolder <- '../../data/Modeling_Data/areas_to_investigate/' # areas that were commonly weird in predictions
 
-feature_type <- 'SGLM'
+feature_type <- 'GLM'
 normalize <- FALSE
 k <- -1 # somehow we need k even though we aren't fitting the model here
 random_seed <- 12244
 trainrange <- TRUE
-novaya_zemlya <- TRUE
+novaya_zemlya <- FALSE
 greenland <- TRUE
-sahara <- TRUE
+sahara <- FALSE
 
 # Data loading and processing ---------------------------------------------
 
@@ -103,8 +103,8 @@ train_features <- cbind(HID=traindata_master$HID, train_features, PA=factor(trai
 colnames(train_features)
 
 # specify feature here
-feature1 <- "ID_IDW1N10"
-feature2 <- "CWD_IDW1N10"
+feature1 <- "TNX_IDW1N10"
+feature2 <- "ID_IDW1N10"
 
 breaks <- c()
 colors<- c()

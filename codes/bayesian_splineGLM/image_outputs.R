@@ -6,13 +6,13 @@ library(reliabilitydiag)
 library(shinystan)
 source("../utils.R")
 
-modelfolder <- './bnorm_sdsnorm/k1/'
-resultfolder <- '../../data/Results/Bayesian_splineGLM/bnorm_sdsnorm/k1/'
+modelfolder <- './bnorm_sdst/k_default/response_notfactor/'
+resultfolder <- '../../data/Results/Bayesian_splineGLM/bnorm_sdst/k_default/'
 datafolder <- '../../data/Modeling_Data/'
 
-feature_type <- 'SGLM'
-normalize <- TRUE
-k <- 1 # somehow we need k even though we aren't fitting the model here
+feature_type <- 'GLM'
+normalize <- FALSE
+k <- -1 # somehow we need k even though we aren't fitting the model here
 random_seed <- 12244
 
 
@@ -65,7 +65,6 @@ conditional_smooths(bsplineGLM)
 condeffs <- conditional_effects(bsplineGLM)
 plot(condeffs, points=TRUE)
 
-
 # Conditional effect contour for feature pair -----------------------------
 
 trainfile <- paste(datafolder,'traindata_',feature_type,'.csv',sep='')
@@ -102,8 +101,8 @@ if (normalize==TRUE){
 colnames(train_features)
 
 # specify feature here
-feature1 <- "ID_IDW1N10"
-feature2 <- "RX1DAY_IDW1N10"
+feature1 <- "TNX_IDW1N10"
+feature2 <- "ID_IDW1N10"
 
 # plot conditional effect contour
 condeff_surface(model, train_features, feature1, feature2, avgline=FALSE)

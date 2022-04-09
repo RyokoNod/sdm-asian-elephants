@@ -309,7 +309,7 @@ condeff_surface <- function(model, traindata, feature1, feature2, avgline=TRUE,
   # Does not return anything. Just plots the contour plot.
   
   
-  names(traindata)[names(traindata) == 'PA'] <- 'labels'
+  names(traindata)[names(traindata) == 'PA'] <- 'Labels'
   feature2_mean <- apply(traindata[feature2], 2, mean)
   eff <- paste(feature1, feature2, sep=":")
   
@@ -325,12 +325,12 @@ condeff_surface <- function(model, traindata, feature1, feature2, avgline=TRUE,
     geom_contour_filled(data=cond_surface[[eff]], 
                         aes(x = effect1__, y = effect2__, z = estimate__),
                         breaks=breaklist) +
-    labs(fill="predictions") +
+    labs(fill="Predictions") +
     xlab(sub("_.*","",feature1)) + ylab(sub("_.*","",feature2))
   
   if (trainpoints==TRUE){
     surface_plot <- surface_plot +
-      geom_point(data=traindata, aes_string(x=feature1,y= feature2, color="labels"), alpha = 0.5) +
+      geom_point(data=traindata, aes_string(x=feature1,y= feature2, color="Labels"), alpha = 0.5) +
       scale_color_manual(values=c("#33FFFF","#FF66FF"))
   }
   if (avgline==TRUE){
@@ -378,6 +378,7 @@ test_condeff_surface <- function(model, testdata, feature1, feature2){
     geom_contour_filled(data=cond_surface[[eff]], 
                         aes(x = effect1__, y = effect2__, z = estimate__),
                         breaks=breaklist) +
+    labs(fill="Predictions") +
     xlab(sub("_.*","",feature1)) + ylab(sub("_.*","",feature2))
   
   return(surface_plot)
