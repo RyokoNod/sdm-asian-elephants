@@ -325,7 +325,8 @@ condeff_surface <- function(model, traindata, feature1, feature2, avgline=TRUE,
     geom_contour_filled(data=cond_surface[[eff]], 
                         aes(x = effect1__, y = effect2__, z = estimate__),
                         breaks=breaklist) +
-    labs(x=feature1, y=feature2, fill="predictions") 
+    labs(fill="predictions") +
+    xlab(sub("_.*","",feature1)) + ylab(sub("_.*","",feature2))
   
   if (trainpoints==TRUE){
     surface_plot <- surface_plot +
