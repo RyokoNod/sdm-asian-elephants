@@ -5,9 +5,11 @@ My master thesis project that uses ML and Bayesian species distribution models t
 The written thesis can be found at **<put link here when it's ready>**.
 
 
+<img src="https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/mind-map-small.jpg" width=600>
+
 ## The mind map
 
-I created a mind map that walks you through the outputs of the models I explored within this project. You can access it at https://miro.com/app/board/uXjVOX_Zhf8=/?share_link_id=937959545296. Or if the link has expired and you can't access it anymore, you can find a vector image of it in ```images/mind-map.pdf```.
+I created a mind map that walks you through the outputs of the models I explored within this project (Thee one shown above). You can access it at https://miro.com/app/board/uXjVOX_Zhf8=/?share_link_id=937959545296. Or if the link has expired and you can't access it anymore, you can find a vector image of it in ```images/mind-map.pdf```.
 
 ## What you can find in each folder
 
