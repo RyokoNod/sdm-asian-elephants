@@ -19,6 +19,15 @@ And finally, below is the list of things you can find in the individual subfolde
 
 ## Random_Forest
 
-There is only one file in here, ```standard_RF.R``` that does everything from model building to plotting.
+There is only one file in here, ```standard_RF.R``` that does everything from model building to plotting. This code was created to run in RStudio.
 
-## bayesian_linearGLM
+## bayesian_linearGLM (Bayesian GLM)
+
+This folder for Bayesian GLM is slightly messy because I kept on having to separate code from the main script every time RStudio was not behaving on Aalto's server.
+
+* ```CV.R```: Does only the spatial cross-validation for the initial priors. 
+* ```bayes_linGLM.R```: The main script for Bayesian GLM. Has everything from model building to plotting, but tends to crash on Aalto's RStudio.
+* ```bayes_linGLM_adjustpriors.R```: Exactly the same as ```bayes_linGLM.R```, but has adjusted prior settings in the function definition.
+* ```big_condeff_surface.R```: The plotting script that draws the conditional surface plot beyond the training data's range.
+* ```inference_adjustpriors.R```: The script that creates models witth adjusted priors. 
+* ```prior_sensitivity.R```: The script that uses the ```priorsense``` package to check whether there is prior sensitivity.
