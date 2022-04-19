@@ -23,11 +23,44 @@ There is only one file in here, ```standard_RF.R``` that does everything from mo
 
 ## bayesian_linearGLM (Bayesian GLM)
 
-This folder for Bayesian GLM is slightly messy because I kept on having to separate code from the main script every time RStudio was not behaving on Aalto's server.
+  This folder for Bayesian GLM is slightly messy because I kept on having to separate code from the main script every time RStudio was not behaving on Aalto's server. The subfolder ```baseline_priors``` is scheduled to contain models that I made initially and the subfolder ```adjusted_priors``` is scheduled to contain models after I adjusted the priors using the priorsense package **<reminder to myself: remember to upload them and organize after review>**. The subfolders may contain RData files, which are outputs I exported from ShinyStan to create plots in ```codes/thesis_plots.R```.
+  
+  The scripts ```CV.R``` and ```inference_adjustpriors.R``` are designed to run on a linux terminal. These need arguments that specify the feature type, scaling, adapt delta, and the maximum tree depth. For example, if you are trying to do CV with the model using scaled spatial CV features with adapt delta = 0.99 and maximum tree depth = 10, you need to run the script as below.
 
-* ```CV.R```: Does only the spatial cross-validation for the initial priors. 
-* ```bayes_linGLM.R```: The main script for Bayesian GLM. Has everything from model building to plotting, but tends to crash on Aalto's RStudio.
-* ```bayes_linGLM_adjustpriors.R```: Exactly the same as ```bayes_linGLM.R```, but has adjusted prior settings in the function definition.
-* ```big_condeff_surface.R```: The plotting script that draws the conditional surface plot beyond the training data's range.
-* ```inference_adjustpriors.R```: The script that creates models witth adjusted priors. 
-* ```prior_sensitivity.R```: The script that uses the ```priorsense``` package to check whether there is prior sensitivity.
+  ```
+  Rscript CV.R SGLM TRUE 0.99 10
+  ```
+
+  Scripts:
+  * ```CV.R```: Does only the spatial cross-validation for the initial priors. 
+  * ```bayes_linGLM.R```: The main script for Bayesian GLM. Has everything from model building to plotting, but tends to crash on Aalto's RStudio.
+  * ```bayes_linGLM_adjustpriors.R```: Exactly the same as ```bayes_linGLM.R```, but has adjusted prior settings in the function definition.
+  * ```big_condeff_surface.R```: The plotting script that draws the conditional surface plot beyond the training data's range.
+  * ```inference_adjustpriors.R```: The script that creates models with adjusted priors. 
+  * ```prior_sensitivity.R```: The script that uses the ```priorsense``` package to check whether there is prior sensitivity.
+
+## bayesian_splineGLM (Bayesian GAM)
+
+  This folder is even more messy than the Bayesian GLM folder because this is where the most of the classic, disorganized iterative modeling took place. The models are scheduled to be placed in the subfolders ```bnorm_sdsnorm```, ```bnorm_sdst```, and ```bunif_sdsnorm```, whose file names indicate the prior sets (bnorm: the intercept and coefficients are normal distributions, bunif: the intercept and coefficients are uniform (flat) distributions, sdsnorm: the non-linearity priors are normal distributions, sdst: the non-linearity priors are Student's t-distributions). These folders are further separated into subfolders that indicate the basis dimension I used (k_default: default basis dimension (-1), k1: basis dimension = 1). Please note that some models created early on in the project do not work with some plotting functions because their outputs were defined as factors.
+  
+  Aside from ```big_condeff_surface.R```, ```image_outputs.R```, and ```prior_sensitivity.R```, everything is designed to run on a linux terminal. Depending on the script, there are up to 5 required arguments you need to specify (all the arguments shown in the Bayesian GLM section + the argument for the basis dimension). For example, when fitting a Bayesian GAM model using raw random CV features with default basis dimension, adapt delta 0.99, and maximum tree depth 13, you need to run the script as below.
+
+  ```
+  Rscript inference.R GLM FALSE 0.99 13 -1
+  ```
+
+  **DO NOT** run any of the Bayesian GAM code on a laptop. These contain extremely heavy code that sometimes took more than 3 days even using Aalto's computing cluster.
+  
+  Scripts:
+  * ```CV.R```: Does spatial cross-validation. This one has variations ending in ```_bnorm_sdsnorm``` and ```_bunif_sdsnorm```, but their only difference is the prior settings.
+  * ```big_condeff_surface.R```: The plotting script that draws the conditional surface plot beyond the training data's range.
+  * ```future_preds.R```: Does predictions using future data.
+  * ```image_outputs.R```: Creates plots from outputs of other scripts.
+  * ```inference.R```: Builds the models. Also has variations ending in ```_bnorm_sdsnorm``` and ```_bunif_sdsnorm```, each with different prior settings.
+  * ```present_preds.R```: Does predictions using present-day data.
+  * ```prior_sensitivity.R```: The script that uses the ```priorsense``` package to check whether there is prior sensitivity. However PSIS breaks down on these models so it is not very useful.
+  
+  ## standard_linearGLM (logistic regression)
+  
+  There is only one file in here, ```standard_linGLM.R``` that does everything from model building to plotting. This code was created to run in RStudio.
+  
