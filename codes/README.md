@@ -1,5 +1,7 @@
 # The codes used in this project
 
+**reminder to myself: don't forget to upload the models after submitting the final draft of the thesis**
+
 The R codes I used are separated by files. The ```old``` folders that can be found here and in subdirectories contain old versions of code that are not used anymore. Some have mistakes in their implementations so it's better not to touch them. The working codes that are placed directly in this folder are:
 
 * ```utils.R```: This contains helper functions that I used within the project. 
@@ -23,7 +25,7 @@ There is only one file in here, ```standard_RF.R``` that does everything from mo
 
 ## bayesian_linearGLM (Bayesian GLM)
 
-  This folder for Bayesian GLM is slightly messy because I kept on having to separate code from the main script every time RStudio was not behaving on Aalto's server. The subfolder ```baseline_priors``` is scheduled to contain models that I made initially and the subfolder ```adjusted_priors``` is scheduled to contain models after I adjusted the priors using the priorsense package **<reminder to myself: remember to upload them and organize after review>**. The subfolders may contain RData files, which are outputs I exported from ShinyStan to create plots in ```codes/thesis_plots.R```.
+  This folder for Bayesian GLM is slightly messy because I kept on having to separate code from the main script every time RStudio was not behaving on Aalto's server. The subfolder ```baseline_priors``` is scheduled to contain models that I made initially and the subfolder ```adjusted_priors``` is scheduled to contain models after I adjusted the priors using the [priorsense package](https://github.com/n-kall/priorsense) . The subfolders may contain RData files, which are outputs I exported from ShinyStan to create plots in ```codes/thesis_plots.R```.
   
   The scripts ```CV.R``` and ```inference_adjustpriors.R``` are designed to run on a linux terminal. These need arguments that specify the feature type, scaling, adapt delta, and the maximum tree depth. For example, if you are trying to do CV with the model using scaled spatial CV features with adapt delta = 0.99 and maximum tree depth = 10, you need to run the script as below.
 
