@@ -35,3 +35,32 @@ Other files that can be found here:
 * ```testdata_pres_SGLM.csv```: Present-day data for spatial CV features. Includes grid cells used for training but not labels.
 * ```traindata_GLM.csv```: The random CV features and labels used for training.
 * ```traindata_SGLM.csv```: The spatial CV features and labels used for training.
+
+## Results
+
+The outputs (prediction results) from the models I created within the project. These are separated into four folders:
+
+* ```Bayesian_linearGLM```: Bayesian GLM
+* ```Bayesian_splineGLM```: Bayesian GAM
+* ```Standard_RF```: Random forest
+* ```Standard_linearGLM```: Logistic regression
+
+```Standard_RF``` and ```Standard_linearGLM``` have file names that are named like *\<prediction type\>\_\<model\>\_\<feature set\>\_\<random seed>*. For example, ```valpreds_RF_normGLM_seed12244.csv``` contains the validation fold predictions (all folds appended) for the random forest model fit on scaled random CV features using random seed 12244. Predictions for future data begin with ```results_``` and predictions for present-day data begin with ```results_present_```. 
+
+The prediction files for ```Bayesian_linearGLM``` and ```Bayesian_splineGLM``` have the same name structure, but has a different naming convention (I got confused in the frenzy of research and forgot the old convention at this point). For example, ```pres_preds_bayeslinGLM_SGLMnorm_seed12244.csv``` contains the present-day predictions for the Bayesian GLM model fit on raw spatial CV features using random seed 12244. Predictions for future data begin with ```preds_``` and predictions for validation folds begin with ```valpreds_```.
+
+The Bayesian model folders are further separated into subfolders by the prior and basis dimension settings I used in modeling:
+
+* ```baseline_priors```: The outputs from models created with initial prior settings.
+* ```adjusted_priors```: The outputs from models created with adjusted prior settings.
+* ```bnorm_sdsnorm```: Normal priors for coefficients, intercept, and non-linearity.
+* ```bnorm_sdst```: Normal priors for coefficients and intercept and Student's t-distribution for non-linearity.
+* ```bunif_sdsnorm```: Uniform (flat) priors for coefficients and intercept and normal priors for non-linearity.
+* ```k_default```: Default basis dimension.
+* ```k1```: Basis dimension 1. There are also folders for basis dimension 4 (```k4```) and basis dimension 5 (```k5```).
+
+## Spatial_Datasets
+
+The files to use in QGIS if you need to create visualizations on maps. For exactly how to do this, you can look at the [QGIS documentation](https://docs.qgis.org/3.22/en/docs/).
+
+
