@@ -15,3 +15,4 @@ The full definitions of features can be found [here](https://www.worldclim.org/d
 The elephant range and psuedo-absence data, or in other words, the labels. 
 
 * ```Elephas_Maximus_Folds_S10_Natural_O20.txt```: The folds used in spatial CV in the previous research by my thesis advisor. The files ending in ```_short``` are truncated and CSV-converted version of it and its metafile.
+* ```Elephas_Maximus_PA_Natural_O20.txt```: The range and psuedo-absence data for Asian elephants. This also has a CSV-converted version.
