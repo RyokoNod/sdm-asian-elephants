@@ -1,6 +1,6 @@
 # The datasets and output files
 
-This folder contains the datasets I used for modeling, the input files I created from them, and the outputs of the models in the ```codes``` folder. Most files here are either tab-separated txt files or CSV, and if not, they are most likely CSVT files, metafiles that are used in QGIS. The files that contain data or predictions have a common key "HID", which are unique identifiers for each grid used in mapping features, labels, and predictions.
+This folder contains the datasets I used for modeling, the input files I created from them, and the outputs of the models in the ```codes``` folder. Most files here are either tab-separated txt files or CSV, and if not, they are most likely CSVT files, metafiles that are used in QGIS. The files that contain data or predictions have a common key "HID", which are unique identifiers for each geospatial grid used in mapping features, labels, and predictions.
 
 Below are descriptions of what you can find inside each folder.
 
@@ -16,3 +16,22 @@ The elephant range and psuedo-absence data, or in other words, the labels.
 
 * ```Elephas_Maximus_Folds_S10_Natural_O20.txt```: The folds used in spatial CV in the previous research by my thesis advisor. The files ending in ```_short``` are truncated and CSV-converted version of it and its metafile.
 * ```Elephas_Maximus_PA_Natural_O20.txt```: The range and psuedo-absence data for Asian elephants. This also has a CSV-converted version.
+
+## Modeling_Data
+
+The data files I created from the files in the other folders for modeling or invesigating outputs. 
+
+The subfolder ```areas_to_invesigate``` has feature data for areas on Earth where the models seemed to give unrealistic predictions: Greenland, Novaya Zemlya (Islands off the north coast of Russia), and the Sahara desert. The features are separated into different files by future features, present-day features, and feature set (GLM: random CV features, SGLM: spatial CV features).
+
+Other files that can be found here:
+* ```areas_to_investigate.ipynb```: The Jupyter notebook I used to create the files in the ```areas_to_investigate``` subfolder.
+* ```feature_selection_origreseach.ipynb```: The Jupyter notebook I used to create the files I used for modeling.
+* ```greenland.csv```: The CSV file that contains the HID for grid cells in Greenland. These were manually selected on QGIS.
+* ```novaya_zemlya.csv```: The CSV file that contains the HID for grid cells in Novaya Zemlya. These were manually selected on QGIS.
+* ```sahara.csv```: The CSV file that contains the HID for the Sahara desert and the area that surrounds it (The north half of Africa). Manually selected on QGIS.
+* ```testdata_GLM.csv```: Future data for random CV features.
+* ```testdata_SGLM.csv```: Future data for spatial CV features.
+* ```testdata_pres_GLM.csv```: Present-day data for random CV features. Includes grid cells used for training but not labels.
+* ```testdata_pres_SGLM.csv```: Present-day data for spatial CV features. Includes grid cells used for training but not labels.
+* ```traindata_GLM.csv```: The random CV features and labels used for training.
+* ```traindata_SGLM.csv```: The spatial CV features and labels used for training.
