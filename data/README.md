@@ -63,4 +63,6 @@ The Bayesian model folders are further separated into subfolders by the prior an
 
 The files to use in QGIS if you need to create visualizations on maps. For exactly how to do this, you can look at the [QGIS documentation](https://docs.qgis.org/3.22/en/docs/).
 
-
+* ```Centroids_ISEA3H09_Geodetic_V_WGS84.shp```: The centroids of the grid cells the features, labels, and predictions are mapped on. Files with the same name ending in .dbf, .prj, and .shx are its metafiles.
+* ```ISEA3H09 - Geodetic Coordinates - Centroids.txt```: The World Geodetic System coordinates for the centroids of the grid cells. Not used in anything, but leaving in folder as additional information.
+* ```test_area.shp```: The centroids of the grid cells that are on the land areas. In other words, the areas I needed to predict habitat suitability. This also has metafiles ending in .cpg, .dbf, .prj, and .shx.
