@@ -15,15 +15,20 @@ plot_shinystan_posteriors <- function(p, renamed_params, title){
     ylab("Parameters") + xlab("")
 }
 
-
-shinystan_output_folder <- "./bayesian_splineGLM/bnorm_sdst/k_default/response_notfactor/"
-shinystan_output_file <- "bayessplineGLM_norm_randCVfeat_posteriors_norm-t-kd.RData"
+#shinystan_output_folder <- "./bayesian_linearGLM/adjusted_priors/"
+#shinystan_output_file <- "bayeslinGLM_randCVfeat_posteriors_adjpriors.RData"
+shinystan_output_folder <- "./bayesian_splineGLM/bnorm_sdsnorm/k1/"
+shinystan_output_file <- "bayessplineGLM_randCVfeat_posteriors_norm-norm-k1.RData"
 
 load(paste(shinystan_output_folder, shinystan_output_file, sep=""))
 
-plot_title <- "Scaled random CV features/ initial priors and basis dimension"
+#shinystan_multiparam_gg$data <- shinystan_multiparam_gg$data[-1,]
 
-#renamed_params <- c("Intercept", "Coeff BIO03",
+
+#plot_title <- "Raw random-CV features/ adjusted priors"
+plot_title <- "Raw random-CV features/ adjusted priors and basis dimension"
+
+#renamed_params <- c("Coeff BIO03",
 #                    "Coeff TN10P", "Coeff GSL",
 #                    "Coeff TNX", "Coeff ID",
 #                    "Coeff BIO14", "Coeff BIO18",
@@ -37,15 +42,6 @@ renamed_params <- c("Intercept", "Coeff BIO03", "Coeff TN10P", "Coeff GSL",
                     "NL CWD", "NL RX1DAY", "NL WSDI")
 
 plot_shinystan_posteriors(shinystan_multiparam_gg, renamed_params, plot_title)
-
-
-
-
-
-
-
-
-
 
 # relabeled conditional effects, Bayesian GLM  -------------------------------------------
 
