@@ -2,7 +2,7 @@
 
 My master thesis project that uses ML and Bayesian species distribution models to find a relocation area for Asian elephants (*Elephas Maximus*) that would remain habitable until 2070. Please don't freak out, this is a fictional experiment. I won't be kidnapping and taking elephants anywhere ;)
 
-The written thesis can be found at **<put link here when it's ready>**.
+The written thesis can be found [here](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/thesis/sci_2022_noda_ryoko.pdf).
 
 
 <img src="https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/mind-map-small.jpg" width=600>
