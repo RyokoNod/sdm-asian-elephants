@@ -11,7 +11,9 @@ data_exploration/.ipynb_checkpoints/
 
 codes/.Rhistory
 
-*.rds
 .Rproj.user
 
 data/Modeling_Data/.ipynb_checkpoints/
+
+codes/old/faulty-pred-implementation/*.rds
+codes/old/hold-out/*.rds
