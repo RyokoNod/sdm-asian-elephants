@@ -14,7 +14,7 @@ The full definitions of features can be found [here](http://etccdi.pacificclimat
 
 The elephant range and psuedo-absence data, or in other words, the labels. 
 
-* ```Elephas_Maximus_Folds_S10_Natural_O20.txt```: The folds used in spatial CV in the previous research by my thesis advisor. The files ending in ```_short``` are truncated and CSV-converted version of the original and its metafile.
+* ```Elephas_Maximus_Folds_S10_Natural_O20.txt```: The folds used in spatial CV in the previous research by M. Mechenich. The files ending in ```_short``` are truncated and CSV-converted version of the original and its metafile.
 * ```Elephas_Maximus_PA_Natural_O20.txt```: The range and psuedo-absence data for Asian elephants. This also has a CSV-converted version.
 
 ## Modeling_Data
@@ -40,14 +40,14 @@ Other files that can be found here:
 
 The outputs (prediction results) from the models I created within the project. These are separated into four folders:
 
-* ```Bayesian_linearGLM```: Bayesian GLM
+* ```Bayesian_linearGLM```: Bayesian logistic regression
 * ```Bayesian_splineGLM```: Bayesian GAM
 * ```Standard_RF```: Random forest
-* ```Standard_linearGLM```: Logistic regression
+* ```Standard_linearGLM```: MLE Logistic regression
 
 ```Standard_RF``` and ```Standard_linearGLM``` have file names that are named like *\<prediction type\>\_\<model\>\_\<feature set\>\_\<random seed>*. For example, ```valpreds_RF_normGLM_seed12244.csv``` contains the validation fold predictions (all folds appended) for the random forest model fit on scaled random CV features using random seed 12244. Predictions for future data begin with ```results_``` and predictions for present-day data begin with ```results_present_```. 
 
-The prediction files for ```Bayesian_linearGLM``` and ```Bayesian_splineGLM``` have the same name structure, but has a different naming convention (I got confused in the frenzy of research and forgot the old convention at this point). In these files predictions for future data begin with ```preds_``` and predictions for validation folds begin with ```valpreds_```. For example, ```pres_preds_bayeslinGLM_SGLMunnorm_seed12244.csv``` contains the present-day predictions for the Bayesian GLM model fit on raw spatial CV features using random seed 12244. 
+The prediction files for ```Bayesian_linearGLM``` and ```Bayesian_splineGLM``` have the same name structure, but has a different naming convention (I got confused in the frenzy of research and forgot the old convention at this point). In these files predictions for future data begin with ```preds_``` and predictions for validation folds begin with ```valpreds_```. For example, ```pres_preds_bayeslinGLM_SGLMunnorm_seed12244.csv``` contains the present-day predictions for the Bayesian logistic regression model fit on raw spatial CV features using random seed 12244. 
 
 The Bayesian model folders are further separated into subfolders by the prior and basis dimension settings I used in modeling:
 
