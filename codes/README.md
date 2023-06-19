@@ -7,7 +7,7 @@ The R codes I used are separated by files. The ```old``` folders that can be fou
 
 Most code files start with the specifications of the feature types. Some variable names will be different from the written report, so I will do a brief explanation here.
 
-* ```feature_type```: "GLM" stands for random CV features, "SGLM" stands for spatial CV features.
+* ```feature_type```: "GLM" stands for random-CV features, "SGLM" stands for spatial-CV features.
 * ```normalize```: If set to TRUE, uses scaled features.
 * ```adapt_d```: The adapt delta parameter in Stan. A larger value makes physics simulation fine-grained.
 * ```treedepth```: The maximum tree depth parameter in Stan. A larger value makes the wait time longer until the algorithm stops the NUTS simulation mid-trajectory.
@@ -21,9 +21,9 @@ And finally, below is the list of things you can find in the individual subfolde
 
 There is only one file in here, ```standard_RF.R``` that does everything from model building to plotting. This code was created to run in RStudio.
 
-## bayesian_linearGLM (Bayesian GLM)
+## bayesian_linearGLM (Bayesian logistic regression)
 
-  This folder for Bayesian GLM is slightly messy because I kept on having to separate code from the main script every time RStudio was not behaving on Aalto's server. The subfolder ```baseline_priors``` is contains models that I made initially and the subfolder ```adjusted_priors``` contains models after I adjusted the priors using the [priorsense package](https://github.com/n-kall/priorsense). The models in the ```baseline_priors``` folder is further separated into models that have different data types for the response variable (factor or not factor - some plotting functions did not work when the response variable was a factor). Also, ```baseline_priors``` and ```adjusted_priors``` may contain RData files, which are outputs I exported from ShinyStan to create plots in ```codes/thesis_plots.R```.
+  This folder for Bayesian logistic regression is slightly messy because I kept on having to separate code from the main script every time RStudio was not behaving on Aalto's server. The subfolder ```baseline_priors``` is contains models that I made initially and the subfolder ```adjusted_priors``` contains models after I adjusted the priors using the [priorsense package](https://github.com/n-kall/priorsense). The models in the ```baseline_priors``` folder is further separated into models that have different data types for the response variable (factor or not factor - some plotting functions did not work when the response variable was a factor). Also, ```baseline_priors``` and ```adjusted_priors``` may contain RData files, which are outputs I exported from ShinyStan to create plots in ```codes/thesis_plots.R```.
   
   The scripts ```CV.R``` and ```inference_adjustpriors.R``` are designed to run on a linux terminal. These need arguments that specify the feature type, scaling, adapt delta, and the maximum tree depth. For example, if you are trying to do CV with the model using scaled spatial CV features with adapt delta = 0.99 and maximum tree depth = 10, you need to run the script as below.
 
@@ -41,7 +41,7 @@ There is only one file in here, ```standard_RF.R``` that does everything from mo
 
 ## bayesian_splineGLM (Bayesian GAM)
 
-  This folder is even more messy than the Bayesian GLM folder because this is where the most of the classic, disorganized iterative modeling took place. The models are  placed in the subfolders ```bnorm_sdsnorm```, ```bnorm_sdst```, and ```bunif_sdsnorm```, whose file names indicate the prior sets (bnorm: the intercept and coefficients are normal distributions, bunif: the intercept and coefficients are uniform (flat) distributions, sdsnorm: the non-linearity priors are normal distributions, sdst: the non-linearity priors are Student's t-distributions). These folders are further separated into subfolders that indicate the basis dimension I used (k_default: default basis dimension (-1), k1: basis dimension = 1). Please note that some models created early on in the project do not work with some plotting functions because their response variables were defined as factors.
+  This folder is even more messy than the Bayesian logistic regression folder because this is where the most of the classic, disorganized iterative modeling took place. The models are  placed in the subfolders ```bnorm_sdsnorm```, ```bnorm_sdst```, and ```bunif_sdsnorm```, whose file names indicate the prior sets (bnorm: the intercept and coefficients are normal distributions, bunif: the intercept and coefficients are uniform (flat) distributions, sdsnorm: the non-linearity priors are normal distributions, sdst: the non-linearity priors are Student's t-distributions). These folders are further separated into subfolders that indicate the basis dimension I used (k_default: default basis dimension (-1), k1: basis dimension = 1). Please note that some models created early on in the project do not work with some plotting functions because their response variables were defined as factors.
   
   Aside from ```big_condeff_surface.R```, ```image_outputs.R```, and ```prior_sensitivity.R```, everything is designed to run on a linux terminal. Depending on the script, there are up to 5 required arguments you need to specify (all the arguments shown in the Bayesian GLM section + the argument for the basis dimension). For example, when fitting a Bayesian GAM model using raw random CV features with default basis dimension, adapt delta 0.99, and maximum tree depth 13, you need to run the script as below.
 
@@ -60,7 +60,7 @@ There is only one file in here, ```standard_RF.R``` that does everything from mo
   * ```present_preds.R```: Does predictions using present-day data.
   * ```prior_sensitivity.R```: The script that uses the ```priorsense``` package to check whether there is prior sensitivity. However PSIS breaks down on these models so it is not very useful.
   
-  ## standard_linearGLM (logistic regression)
+  ## standard_linearGLM (MLE logistic regression)
   
   There is only one file in here, ```standard_linGLM.R``` that does everything from model building to plotting. This code was created to run in RStudio.
   
