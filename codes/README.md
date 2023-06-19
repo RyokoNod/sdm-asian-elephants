@@ -33,7 +33,7 @@ There is only one file in here, ```standard_RF.R``` that does everything from mo
 
   Scripts:
   * ```CV.R```: Does only the spatial cross-validation for the initial priors. 
-  * ```bayes_linGLM.R```: The main script for Bayesian GLM. Has everything from model building to plotting, but tends to crash on Aalto's RStudio.
+  * ```bayes_linGLM.R```: The main script for Bayesian logistic regression. Has everything from model building to plotting, but tends to crash on Aalto's RStudio.
   * ```bayes_linGLM_adjustpriors.R```: Exactly the same as ```bayes_linGLM.R```, but has adjusted prior settings in the function definition.
   * ```big_condeff_surface.R```: The plotting script that draws the conditional surface plot beyond the training data's range.
   * ```inference_adjustpriors.R```: The script that creates models with adjusted priors. 
@@ -43,7 +43,7 @@ There is only one file in here, ```standard_RF.R``` that does everything from mo
 
   This folder is even more messy than the Bayesian logistic regression folder because this is where the most of the classic, disorganized iterative modeling took place. The models are  placed in the subfolders ```bnorm_sdsnorm```, ```bnorm_sdst```, and ```bunif_sdsnorm```, whose file names indicate the prior sets (bnorm: the intercept and coefficients are normal distributions, bunif: the intercept and coefficients are uniform (flat) distributions, sdsnorm: the non-linearity priors are normal distributions, sdst: the non-linearity priors are Student's t-distributions). These folders are further separated into subfolders that indicate the basis dimension I used (k_default: default basis dimension (-1), k1: basis dimension = 1). Please note that some models created early on in the project do not work with some plotting functions because their response variables were defined as factors.
   
-  Aside from ```big_condeff_surface.R```, ```image_outputs.R```, and ```prior_sensitivity.R```, everything is designed to run on a linux terminal. Depending on the script, there are up to 5 required arguments you need to specify (all the arguments shown in the Bayesian GLM section + the argument for the basis dimension). For example, when fitting a Bayesian GAM model using raw random CV features with default basis dimension, adapt delta 0.99, and maximum tree depth 13, you need to run the script as below.
+  Aside from ```big_condeff_surface.R```, ```image_outputs.R```, and ```prior_sensitivity.R```, everything is designed to run on a linux terminal. Depending on the script, there are up to 5 required arguments you need to specify (all the arguments shown in the Bayesian logistic regression section + the argument for the basis dimension). For example, when fitting a Bayesian GAM model using raw random CV features with default basis dimension, adapt delta 0.99, and maximum tree depth 13, you need to run the script as below.
 
   ```
   Rscript inference.R GLM FALSE 0.99 13 -1
