@@ -1,15 +1,15 @@
 # Predicting the habitat suitability for elephants in 2070
 
-My master thesis project that uses ML and Bayesian species distribution models to find a relocation area for Asian elephants (*Elephas Maximus*) that would remain habitable until 2070. Please don't freak out, this is a fictional experiment. I won't be kidnapping and taking elephants anywhere ;)
+This is the project that corresponds the manuscript authored by Ryoko Noda, Michael F. Mechenich, Juha Saarinen, Aki Vehtari, and Indrė Žliobaitė, submitted to Ecological Informatics and waiting for review. The project uses non-Bayesian and Bayesian species distribution models to find candidate areas for rewilding for Asian elephants (*Elephas Maximus*) that would remain habitable for them until 2070. It originally used to be Ryoko's master thesis project at Aalto University.
 
-The written thesis can be found [here](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/thesis/sci_2022_noda_ryoko.pdf).
+The original thesis can be found [here](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/thesis/sci_2022_noda_ryoko.pdf).
 
 
 <img src="https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/mind-map-small.jpg" width=600>
 
 ## The mind map
 
-I created a mind map that walks you through the outputs of the models I explored within this project (the one shown above). You can access it [here](https://miro.com/app/board/uXjVOX_Zhf8=/?share_link_id=937959545296). If the link has expired, you can find a vector image of it in ```images/mind-map.pdf```.
+I created a mind map that walks you through the outputs of the models I explored within this project (the one shown above). You can access it [here](https://miro.com/app/board/uXjVOX_Zhf8=/?share_link_id=937959545296). If the link has somehow expired, you can find a vector image of it in ```images/mind-map.pdf```.
 
 ## What you can find in each folder
 
