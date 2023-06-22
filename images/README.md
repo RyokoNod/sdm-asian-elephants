@@ -21,10 +21,10 @@ Folders:
 * ```conditional_effects```: The conditional effect of one feature on habitat suitability.
 * ```conditional_lines```: The conditional effect of one feature on the log-odds (for Bayesian logistic regression).
 * ```conditional_smooths```: The conditional effect of one feature on the log-odds (for Bayesian GAM).
-* ```normalized_randCV```: Plots from models fit on scaled random CV features.
-* ```normalized_spatialCV```: Plots from models fit on scaled spatial CV features.
-* ```unnormalized_randCV```: Plots from models fit on raw random CV features.
-* ```unnormalized_spatialCV```: Plots from models fit on raw spatial CV features.
+* ```normalized_randCV```: Plots from models fit on scaled random-CV features.
+* ```normalized_spatialCV```: Plots from models fit on scaled spatial-CV features.
+* ```unnormalized_randCV```: Plots from models fit on raw random-CV features.
+* ```unnormalized_spatialCV```: Plots from models fit on raw spatial-CV features.
 * ```wide_contours```: The two-feature interaction effect plots visualized outside of the training data's range.
 * ```ID_to_others```: The two-feature interaction plots with icing days on the x-axis.
 
@@ -38,10 +38,10 @@ File naming conventions:
 * ```posteriors```: The posterior distribution plots from ShinyStan. There are CSV files that accompany these plots that have the actual values.
 * ```scores```: The training and validation scores.
 * ```tradcal```: The traditional calibration plot.
-* ```GLM```: Fit on raw random CV features.
-* ```SGLM```: Fit on raw spatial CV features.
-* ```nGLM```: Fit on scaled random CV features.
-* ```nSGLM```: Fit on scaled spatial CV features.
+* ```GLM```: Fit on raw random-CV features.
+* ```SGLM```: Fit on raw spatial-CV features.
+* ```nGLM```: Fit on scaled random-CV features.
+* ```nSGLM```: Fit on scaled spatial-CV features.
 * ```priorsens```: Priorsense outputs.
 * ```12244```: The common random seed I used during this project.
 * ```\<feature name\>-PA```: The conditional effect of \<feature name\> on habitat suitability.
@@ -58,28 +58,28 @@ In case my mind map link is not working, you can find the PDF version ```mind-ma
   * [Point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_linearGLM/adjusted_priors/GIF/diff_future_rawscaledSGLM.gif)
   * [IQR](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_linearGLM/adjusted_priors/GIF/diff_futureiqr_rawscaledSGLM.gif)
 * **The prior and basis dimension settings I tried in Bayesian GAM**
-  * Models fit on raw random CV features
+  * Models fit on raw random-CV features
     * Set 2-4
       * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/bsGLM_GLM_present.gif)
       * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/bsGLM_GLM_future.gif)
     * Set 5-6
       * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/bsGLM_GLM_present.gif)
       * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/bsGLM_GLM_future.gif)
-  * Models fit on scaled random CV features
+  * Models fit on scaled random-CV features
     * Set 2-4
       * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/bsGLM_nGLM_present.gif)
       * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/bsGLM_nGLM_future.gif)
     * Set 5-6
       * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/bsGLM_nGLM_present.gif)
       * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/bsGLM_nGLM_future.gif)
-  * Models fit on raw spatial CV features
+  * Models fit on raw spatial-CV features
     * Set 2-4
       * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/bsGLM_SGLM_present.gif)
       * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/bsGLM_SGLM_future.gif)
     * Set 5-6
       * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/bsGLM_GLM_present.gif)
       * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/bsGLM_GLM_future.gif)
-  * Models fit on scaled spatial CV features
+  * Models fit on scaled spatial-CV features
     * Set 2-4
       * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/bsGLM_nSGLM_present.gif)
       * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/bsGLM_nSGLM_future.gif)
