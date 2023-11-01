@@ -3,7 +3,8 @@
 The R codes I used are separated by files. The ```old``` folders that can be found here and in subdirectories contain old versions of code that are not used anymore. Some have mistakes in their implementations so it's better not to touch them. The working codes that are placed directly in this folder are:
 
 * ```utils.R```: This contains helper functions that I used within the project. 
-* ```thesis_plots.R```: This is the file I used to create plots that I made specifically for the written report.
+* ```thesis_plots.R```: This is the file used to create plots that were made specifically for the written reports (thesis/manuscript).
+* ```elevation_filter.py```: The code used to filter out areas with elevation above 3000 meters for manuscript submission.
 
 Most code files start with the specifications of the feature types. Some variable names will be different from the written report, so I will do a brief explanation here.
 
