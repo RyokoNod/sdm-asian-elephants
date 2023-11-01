@@ -61,6 +61,8 @@ The Bayesian model folders are further separated into subfolders by the prior an
 * ```k4```: Basis dimension 4.
 * ```k5```: Basis dimension 5.
 
+In some folders you may see a subfolder named ```elevation_filtered```. These are results with geographic areas above 3000 meters in elevation omitted. These results were used in the second submission to Ecological Informatics.
+
 ## Spatial_Datasets
 
 The files to use in QGIS if you need to create visualizations on maps. For exactly how to do this, you can look at the [QGIS documentation](https://docs.qgis.org/3.22/en/docs/).
