@@ -17,3 +17,6 @@ data/Modeling_Data/.ipynb_checkpoints/
 
 codes/old/faulty-pred-implementation/*.rds
 codes/old/hold-out/*.rds
+
+.idea/
+*.rds
