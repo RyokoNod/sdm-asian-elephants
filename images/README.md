@@ -27,6 +27,7 @@ Folders:
 * ```unnormalized_spatialCV```: Plots from models fit on raw spatial-CV features.
 * ```wide_contours```: The two-feature interaction effect plots visualized outside of the training data's range.
 * ```ID_to_others```: The two-feature interaction plots with icing days on the x-axis.
+* ```elevation_filtered_maps```: The visualizations on QGIS with areas above 3000 meters in elevation filtered out.
 
 File naming conventions:
 * ```train```: Plots that show performance for the training data. The files that don't have this prefix are for the validation folds.
