@@ -10,7 +10,7 @@ datafolder <- '../../data/Modeling_Data/'
 resultfolder <- '../../data/Results/Standard_RF/'
 feature_type <- 'SGLM' # set 'GLM' or 'SGLM' to switch feature sets
 normalize <-TRUE # TRUE if you want to normalize the data
-niter <- 100 # each prediction is the mean of niter random forests
+niter <- 1 # each prediction is the mean of niter random forests
 
 trainfile <- paste(datafolder,'traindata_',feature_type,'.csv',sep='')
 testfile <- paste(datafolder,'testdata_',feature_type,'.csv',sep='')
