@@ -53,39 +53,39 @@ File naming conventions:
 In case my mind map link is not working, you can find the PDF version ```mind-map.pdf``` here. This is a vector image that lets you read all the text, but it will not show the GIF animations that was in the original mind map. So here is a list of all GIF animations that I created.
 
 * **The difference between Bayesian logistic regression future predictions when using scaled features and initial priors**
-  * [Point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_linearGLM/baseline_priors/GIF/futurepreds_blGLM_SGLM.gif)
-  * [IQR](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_linearGLM/baseline_priors/GIF/futureiqr_blGLM_SGLM.gif)
+  * [Point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_linearGLM/baseline_priors/elevation_filtered_maps/diff_gif/diff_preds.gif)
+  * [IQR](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_linearGLM/baseline_priors/elevation_filtered_maps/diff_gif/diff_IQR.gif)
 * **The difference between Bayesian logistic regression future predictions when using scaled features after prior adjustment**
-  * [Point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_linearGLM/adjusted_priors/GIF/diff_future_rawscaledSGLM.gif)
-  * [IQR](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_linearGLM/adjusted_priors/GIF/diff_futureiqr_rawscaledSGLM.gif)
+  * [Point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_linearGLM/adjusted_priors/elevation_filtered_maps/diff_gif/diff_preds.gif)
+  * [IQR](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_linearGLM/adjusted_priors/elevation_filtered_maps/diff_gif/diff_IQR.gif)
 * **The prior and basis dimension settings I tried in Bayesian GAM**
   * Models fit on raw random-CV features
     * Set 2-4
-      * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/bsGLM_GLM_present.gif)
-      * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/bsGLM_GLM_future.gif)
+      * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/elevation_filtered/GLM_un_pres.gif)
+      * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/elevation_filtered/GLM_un_fut.gif)
     * Set 5-6
-      * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/bsGLM_GLM_present.gif)
-      * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/bsGLM_GLM_future.gif)
+      * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/elevation_filtered/GLM_un_present.gif)
+      * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/elevation_filtered/GLM_un_future.gif)
   * Models fit on scaled random-CV features
     * Set 2-4
-      * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/bsGLM_nGLM_present.gif)
-      * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/bsGLM_nGLM_future.gif)
+      * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/elevation_filtered/GLM_n_pres.gif)
+      * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/elevation_filtered/GLM_n_fut.gif)
     * Set 5-6
-      * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/bsGLM_nGLM_present.gif)
-      * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/bsGLM_nGLM_future.gif)
+      * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/elevation_filtered/GLM_n_present.gif)
+      * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/elevation_filtered/GLM_n_future.gif)
   * Models fit on raw spatial-CV features
     * Set 2-4
-      * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/bsGLM_SGLM_present.gif)
-      * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/bsGLM_SGLM_future.gif)
+      * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/elevation_filtered/SGLM_un_pres.gif)
+      * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/elevation_filtered/SGLM_un_fut.gif)
     * Set 5-6
-      * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/bsGLM_GLM_present.gif)
-      * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/bsGLM_GLM_future.gif)
+      * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/elevation_filtered/SGLM_un_present.gif)
+      * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/elevation_filtered/SGLM_un_future.gif)
   * Models fit on scaled spatial-CV features
     * Set 2-4
-      * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/bsGLM_nSGLM_present.gif)
-      * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/bsGLM_nSGLM_future.gif)
+      * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/elevation_filtered/SGLM_n_pres.gif)
+      * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_splineGLM/GIF/bnorm_sdst_changek/elevation_filtered/SGLM_n_fut.gif)
     * Set 5-6
-      * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/bsGLM_nSGLM_present.gif)
-      * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/tree/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/bsGLM_nSGLM_future.gif)
+      * [Present-day point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/elevation_filtered/SGLM_n_present.gif)
+      * [Future point predictions](https://github.com/RyokoNod/sdm-asian-elephants/blob/main/images/Bayesian_splineGLM/GIF/defaultk_changeprior/elevation_filtered/SGLM_n_future.gif)
 
 
